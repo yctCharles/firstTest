@@ -97,8 +97,9 @@
           {{ " " }}
           <a
             href="#"
+            @click="$emit('componentChange',{message:'Register'})"
             class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 dark:text-lime-100"
-            >Start a 14 day free trial</a
+            > create a account </a
           >
         </p>
       </div>
@@ -106,7 +107,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="login">
 const theme = useState("theme");
 </script>
 

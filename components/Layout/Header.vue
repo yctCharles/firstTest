@@ -51,12 +51,17 @@
     </div>
 
     <div class="loginPage" v-show="showpage">
-      <Login @data-sent="receiveData" />
+      <component :is="page==='Login' ? Login : Register" @data-sent="receiveData" @componentChange="receivePage" />
+      <!-- <Login /> -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts" name="Header">
+
+const Login= resolveComponent('Login')
+const Register= resolveComponent('Register')
+const page=ref('Login')
 const testLogin = ref(false);
 const showpage = ref(false);
 const showLogin = () => {
@@ -68,6 +73,10 @@ const showLogin = () => {
 const receiveData = (data: any) => {
   console.log(data);
   showpage.value = data.message;
+};
+
+const receivePage = (data: any) => {
+   page.value= data.message
 };
 </script>
 
