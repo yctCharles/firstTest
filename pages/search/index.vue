@@ -2,7 +2,6 @@
   <div class="flex flex-col w-full"  :class="theme">
      <SearchHeader />
      <SearchMainer />
-     <Footer />
   </div>
 </template>
 
