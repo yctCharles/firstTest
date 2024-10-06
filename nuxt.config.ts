@@ -17,4 +17,9 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
   ],
+  runtimeConfig:{
+    public: {
+      baseURL: 'http://localhost:8080'
+    }
+  }
 })

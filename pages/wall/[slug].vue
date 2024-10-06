@@ -11,8 +11,7 @@
         <div
           class="flex justify-center items-center w-full h-5/6 bg-slate-50 m-2"
         >
-          <!-- <img src="" alt=""> -->
-          <p class="text-3xl font-bold">Slug: {{ $route.params.slug }}</p>
+          <img :src="$route.query.url?.toString()" class="w-full h-full object-cover" alt="图片未加载" />
         </div>
         <div class="flex flex-row w-full h-1/6 justify-center items-center">
           <div class="flex flex-col justify-center items-center m-2 w-20">
@@ -82,6 +81,5 @@
 
 <script setup lang="ts">
 import SearchHeader from "~/components/Layout/SearchHeader.vue";
-
 const theme = useState("theme");
 </script>

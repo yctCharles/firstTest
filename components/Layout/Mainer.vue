@@ -7,6 +7,7 @@
     >
       <div class="w-4/5 h-20 flex justify-center items-center m-4">
         <input
+          v-model="params"
           class="w-4/5 h-12 rounded-full bg-white text-black pl-3"
           @keyup.enter="gotoSearch"
           type="text"
@@ -22,8 +23,14 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter();
-const gotoSearch = () => {
-  router.push("/search");
-};
+  // const router = useRouter();
+  const params = ref("");
+  const gotoSearch = async () => {
+    await navigateTo({
+      path: "/search",
+      query: {
+        q: params.value,
+      },
+    });
+  };
 </script>
