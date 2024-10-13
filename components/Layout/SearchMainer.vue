@@ -16,7 +16,7 @@
     // }
     const imgList = ref([])
     //const q = useRoute().query.q
-    const {data:imgUrl} = await useFetch('http://localhost:8080/img/search')
+    const {data:imgUrl} =await useFetch('http://localhost:8080/img/search')
 
     imgList.value = imgUrl.value.data
 </script>

@@ -47,6 +47,11 @@
         <h4 v-if="!testLogin" class="dark:text-white font-bold text-slate-600">
           未登入
         </h4>
+        <div v-if="testLogin" class=" absolute dark:text-white font-bold text-slate-600 olute top-11 right-5 w-20 h-20 flex items-center justify-center">
+          <a class="w-full h-full" @click="loginOut">
+            <h4> 退出 </h4>
+          </a>
+        </div>
       </div>
     </div>
 
@@ -62,12 +67,29 @@
 const Login= resolveComponent('Login')
 const Register= resolveComponent('Register')
 const page=ref('Login')
+
 const testLogin = ref(false);
 const showpage = ref(false);
+
+onMounted(() => {
+  const token = localStorage.getItem("token");
+  if (token!=null && token != "") {
+       testLogin.value = true;
+  }
+})
+
 const showLogin = () => {
   if (!testLogin.value) {
     showpage.value = true;
+  }else{
+    navigateTo('/user');
   }
+};
+
+const loginOut = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("userId");
+  testLogin.value = false;
 };
 
 const receiveData = (data: any) => {

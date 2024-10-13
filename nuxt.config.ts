@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
+    '@element-plus/nuxt'
   ],
   tailwindcss: {
     viewer: true,
