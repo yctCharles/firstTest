@@ -36,7 +36,7 @@
           Sign in to your account
         </h2>
       </div>
-     <form class=""  @submit="submitForm">
+     <form class="" method="POST" @submit="submitForm">
       <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <div>
             <label

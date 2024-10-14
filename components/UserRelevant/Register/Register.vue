@@ -38,7 +38,7 @@
       </div>
 
       <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form class="space-y-6" action="#" method="POST">
+        <form class="space-y-6" method="POST" @submit="submitRegister">
           <div>
             <label
               for="email"
@@ -51,7 +51,8 @@
                 name="email"
                 type="email"
                 autocomplete="email"
-                required="false"
+                required="true"
+                v-model="emailmessage"
                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -71,7 +72,8 @@
                 name="password"
                 type="password"
                 autocomplete="current-password"
-                required="false"
+                v-model="passwordmessage"
+                required="true"
                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -81,14 +83,17 @@
                 class="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-100"
                 >Certain Password</label
               >
+              <span v-if="passwordmessage != certainpasswordmessage" class="text-red-500">Password not match</span>
+              <span v-if="passwordmessage == certainpasswordmessage && passwordmessage != ''" class="text-green-500">Password match</span>
             </div>
             <div class="mt-2">
               <input
                 id="certain_password"
                 name="certain_password"
                 type="password"
-                autocomplete="current-password"
-                required="false"
+                autocomplete="certain-password"
+                v-model="certainpasswordmessage"
+                required="true"
                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -96,8 +101,12 @@
 
           <div>
             <button
+              :disabled="judgeRegister"
               type="submit"
               class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              :class="{
+                'cursor-not-allowed': judgeRegister,
+              }"
             >
               Sign Up
             </button>
@@ -122,6 +131,35 @@
 
 <script setup lang="ts" name="register">
 const theme = useState("theme");
+const emailmessage = ref("");
+const passwordmessage = ref("");
+const certainpasswordmessage = ref("");
+const judgeRegister = computed(() => {
+  if (emailmessage.value == "" || passwordmessage.value == "" || certainpasswordmessage.value == "") {
+    return true;
+  }
+  if (passwordmessage.value != certainpasswordmessage.value) {
+    return true;
+  }
+  return false;
+});
+  const config:any = useRuntimeConfig();
+async function submitRegister(){
+    await useFetch("/user/register", {
+        baseURL:config.public.baseURL,
+        method: "post",
+        headers:{
+            "Content-Type": "application/json",
+        },
+        body: {
+            email: emailmessage.value,
+            password: passwordmessage.value,
+        },
+    }).then((res) => {
+        console.log(res.data.value);
+    })
+}
+
 </script>
 
 <style scoped>
