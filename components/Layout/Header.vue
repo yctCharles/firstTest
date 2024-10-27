@@ -5,7 +5,23 @@
         <img src="/img/mindlogo.png" class="obj-fit" alt="logo" />
       </NuxtLink>
     </div>
-    <div class="w-36 h-100% flex items-center justify-center text-center m-2">
+    <div class="w-48 h-100% flex items-center justify-center text-center m-2">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        fill="currentColor"
+        class="size-6 mr-1 fill-blue-200 stroke-blue-900 dark:stroke-slate-300"
+      >
+        <path
+          d="M11.47 1.72a.75.75 0 0 1 1.06 0l3 3a.75.75 0 0 1-1.06 1.06l-1.72-1.72V7.5h-1.5V4.06L9.53 5.78a.75.75 0 0 1-1.06-1.06l3-3ZM11.25 7.5V15a.75.75 0 0 0 1.5 0V7.5h3.75a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h3.75Z"
+        />
+      </svg>
+
+      <NuxtLink to="/upload">
+        <h1 class="text-blue-700 font-bold dark:text-slate-300 mr-3">Upload</h1>
+      </NuxtLink>
+
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -47,42 +63,48 @@
         <h4 v-if="!testLogin" class="dark:text-white font-bold text-slate-600">
           未登入
         </h4>
-        <div v-if="testLogin" class=" absolute dark:text-white font-bold text-slate-600 olute top-11 right-5 w-20 h-20 flex items-center justify-center">
+        <div
+          v-if="testLogin"
+          class="absolute dark:text-white font-bold text-slate-600 olute top-11 right-5 w-20 h-20 flex items-center justify-center"
+        >
           <a class="w-full h-full" @click="loginOut">
-            <h4> 退出 </h4>
+            <h4>退出</h4>
           </a>
         </div>
       </div>
     </div>
 
     <div class="loginPage" v-show="showpage">
-      <component :is="page==='Login' ? Login : Register" @data-sent="receiveData" @componentChange="receivePage" />
+      <component
+        :is="page === 'Login' ? Login : Register"
+        @data-sent="receiveData"
+        @componentChange="receivePage"
+      />
       <!-- <Login /> -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts" name="Header">
-
-const Login= resolveComponent('Login')
-const Register= resolveComponent('Register')
-const page=ref('Login')
+const Login = resolveComponent("Login");
+const Register = resolveComponent("Register");
+const page = ref("Login");
 
 const testLogin = ref(false);
 const showpage = ref(false);
 
 onMounted(() => {
   const token = localStorage.getItem("token");
-  if (token!=null && token != "") {
-       testLogin.value = true;
+  if (token != null && token != "") {
+    testLogin.value = true;
   }
-})
+});
 
 const showLogin = () => {
   if (!testLogin.value) {
     showpage.value = true;
-  }else{
-    navigateTo('/user');
+  } else {
+    navigateTo("/user");
   }
 };
 
@@ -98,7 +120,7 @@ const receiveData = (data: any) => {
 };
 
 const receivePage = (data: any) => {
-   page.value= data.message
+  page.value = data.message;
 };
 </script>
 

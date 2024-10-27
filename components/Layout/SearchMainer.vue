@@ -1,8 +1,10 @@
 <template>
-  <main class="w-full h-screen bg-slate-600">
-    <div class="flex justify-center items-center w-full bg-sky-100 dark:bg-slate-600 py-5">
-      <div class="w-11/12 grid grid-cols-6 gap-x-3" v-for="item in imgList" :key="item.id">
-        <Card :wallPaperObj=item />
+  <main class="w-full h-screen bg-cyan-100 dark:bg-slate-700">
+    <div class="flex justify-center items-center w-full bg-sky-100 dark:bg-slate-600 py-5 ">
+      <div class="w-11/12 grid grid-cols-6 gap-x-3" >
+         <div v-for="item in imgList" :key="item.id"> 
+           <Card :wallPaperObj="item" />
+         </div>
       </div>
     </div>
   </main>
@@ -10,14 +12,12 @@
 
 <script setup lang="ts">
     interface WallPapers{
-        id:number,
+        id:number | string,
         userId:number,
-        url:string,
-        width:number,
-        height:number,
+        minUrl:string,
     }
     const imgList = ref<WallPapers[]>([])
-    const {data} =await useFetch('/img/search',{
+    const {data} =await useFetch('/img/search2',{
       method:'GET',
       baseURL:useRuntimeConfig().public.baseURL,
     })

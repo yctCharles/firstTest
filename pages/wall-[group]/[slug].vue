@@ -3,8 +3,12 @@
     <!-- <p>Slug: {{ $route.params.slug }}</p> -->
     <SearchHeader />
     <div class="flex flex-row w-full adapt bg-slate-300 dark:bg-slate-800">
-      <div class="w-1/6 h-full bg-slate-200 dark:bg-slate-700 p-2">
+      <div class="w-1/6 h-full bg-slate-200 dark:bg-slate-700 p-2 flex flex-col">
         <!-- <h1 v-for="tag in tagList" :key="tag" class="m-2">Tag :{{ tag }}</h1> -->
+        <span class="font-bold text-lg m-2 text-slate-400 dark:text-white">
+          图片信息:
+        </span>
+        <h2 class="ml-2 text-lg text-slate-700 dark:text-white font-bold"> 尺寸： {{ wallobj.width }} x {{ wallobj.height }}</h2>
         <span class="font-bold text-lg m-2 text-slate-400 dark:text-white">
           相关标签:
         </span>
@@ -19,7 +23,7 @@
           class="flex justify-center items-center w-full h-5/6 bg-slate-50 m-2"
         >
           <img
-            :src="$route.query.url?.toString()"
+            :src="wallobj.url"
             class="w-full h-full object-cover"
             alt="图片未加载"
           />
@@ -73,6 +77,11 @@
               stroke-width="1.5"
               stroke="currentColor"
               class="size-6 stroke-pink-400 stroke-2 cursor-pointer"
+              @click="likeImage"
+              :class="{
+                 'fill-pink-200':isLike
+              }
+              "
             >
               <path
                 stroke-linecap="round"
@@ -82,7 +91,7 @@
             </svg>
 
             <label for="img_like" class="text-center">
-              {{ 0 }}
+              {{ count }}
             </label>
           </div>
         </div>
@@ -98,9 +107,12 @@ const theme = useState("theme");
 const route = useRoute();
 const tagList = ref<string[]>([]);
 const user = ref<any>(null);
+const wallobj = ref<any>(null);
 const wallPaperId = route.params.slug;
 const userId = route.params.group;
 const isCollection = ref(false);
+const isLike = ref(false);
+const count = ref(0);
 
 await useFetch("/tag/get/" + `${wallPaperId}`, {
   method: "GET",
@@ -129,6 +141,34 @@ await useFetch("/collection/list", {
 }).then((res) => {
   const d: any = res.data.value;
   isCollection.value = d.data;
+});
+
+await useFetch("/like/getAll/" + `${wallPaperId}`, {
+  method: "GET",
+  baseURL: useRuntimeConfig().public.baseURL,
+}).then((res) => {
+  const d: any = res.data.value;
+  count.value= d.data;
+})
+
+await useFetch("/img/get/"+`${wallPaperId}`, {
+  method: "GET",
+  baseURL: useRuntimeConfig().public.baseURL,
+}).then((res) => {
+  const d:any = res.data.value;
+  wallobj.value = d.data;
+})
+
+await useFetch("/like/islike", {
+  method: "GET",
+  baseURL: useRuntimeConfig().public.baseURL,
+  params: {
+    userId: userId,
+    wallpaperId: wallPaperId,
+  }
+}).then((res) => {
+  const d: any = res.data.value;
+  isLike.value = d.data;
 });
 
 
@@ -188,6 +228,26 @@ function collectionImage() {
        isCollection.value = false;
      }
    });
+}
+
+function likeImage(){
+    if(!isLike.value){
+      useFetch("/like/action", {
+        method: "POST",
+        baseURL: useRuntimeConfig().public.baseURL,
+        params: {
+          userId: userId,
+          wallpaperId: wallPaperId,
+        },
+      }).then((res) => {
+        const d: any = res.data.value;
+        alert(d.data);
+        count.value++;
+        isLike.value = true;
+      
+      });
+    }else{
+    }
 }
 
 </script>

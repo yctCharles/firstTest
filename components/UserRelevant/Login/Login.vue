@@ -129,23 +129,15 @@ async function submitForm() {
       },
     }).then((res:any) => {
       if(res.data.value.code == 0){
-          // ElMessage({
-          //   message: res.data.value.msg,
-          //   type: 'error'
-          // })
           alert(res.data.value.msg)
       }else if(res.data.value.code == 1){
           alert(res.data.value.msg)
           localStorage.setItem("token", res.data.value.data.token);
           localStorage.setItem("userId", res.data.value.data.userId);
-          // ElMessage({
-          //   message: res.data.value.msg,
-          //   type: 'success'
-          // })
       } 
     });
   } catch (error) {
-    console.error("请求接口失败");
+    console.error("请求接口失败",error);
   }
   console.log("...")
 }
