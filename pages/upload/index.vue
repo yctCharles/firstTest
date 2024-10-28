@@ -2,284 +2,132 @@
   <div class="flex flex-col w-full" :class="theme">
     <SearchHeader />
     <div
-      class="flex w-full justify-center items-center bg-cyan-200 dark:bg-slate-600"
+      class="flex flex-col items-center justify-center w-2/3 h-full m-auto bg-slate-400"
     >
-      <form class="bg-cyan-50 dark:bg-slate-500 p-2 rounded-sm mt-2">
-        <div class="space-y-12">
-          <div class="border-b border-gray-900/10 pb-12">
-            <div class="flex flex-col justify-center items-center">
-              <h2
-                class="text-base font-semibold leading-7 text-gray-900 dark:text-gray-100"
-              >
-                Upload your image
-              </h2>
-           
-            <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-100">
-              This information will be displayed publicly so be careful what you
-              share.
-            </p> 
-            </div>
-            <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div class="sm:col-span-4">
-                <label
-                  for="username"
-                  class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
-                  >Username</label
-                >
-                <div class="mt-2">
-                  <div
-                    class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md"
-                  >
-                    <input
-                      type="text"
-                      name="username"
-                      id="username"
-                      autocomplete="username"
-                      class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                      placeholder="janesmith"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-span-full">
-                <label
-                  for="about"
-                  class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
-                  >About</label
-                >
-                <div class="mt-2">
-                  <textarea
-                    id="about"
-                    name="about"
-                    rows="3"
-                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-                <p
-                  class="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-100"
-                >
-                  Write a few sentences about yourself.
-                </p>
-              </div>
-
-              <div class="col-span-full">
-                <label
-                  for="photo"
-                  class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
-                  >Photo</label
-                >
-                <div class="mt-2 flex items-center gap-x-3">
-                  <UserCircleIcon
-                    class="h-12 w-12 text-gray-300"
-                    aria-hidden="true"
-                  />
-                  <button
-                    type="button"
-                    class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                  >
-                    Change
-                  </button>
-                </div>
-              </div>
-
-              <div class="col-span-full">
-                <label
-                  for="cover-photo"
-                  class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
-                  >Cover photo</label
-                >
-                <div
-                  class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 bg-white"
-                >
-                  <div class="text-center">
-                    <PhotoIcon
-                      class="mx-auto h-12 w-12 text-gray-300"
-                      aria-hidden="true"
-                    />
-                    <div class="mt-4 flex text-sm leading-6 text-gray-600">
-                      <label
-                        for="file-upload"
-                        class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                      >
-                        <span>Upload a file</span>
-                        <input
-                          id="file-upload"
-                          name="file-upload"
-                          type="file"
-                          class="sr-only"
-                        />
-                      </label>
-                      <p class="pl-1">or drag and drop</p>
-                    </div>
-                    <p class="text-xs leading-5 text-gray-600">
-                      PNG, JPG, GIF up to 10MB
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="border-b border-gray-900/10 pb-12">
-            <h2
-              class="text-base font-semibold leading-7 text-gray-900 dark:text-gray-100"
+      <h2 class="text-white font-bold m-2">click upload image:</h2>
+      <label
+        for="file-input"
+        class="relative upload-icon flex items-center justify-center w-32 h-32 border-2 border-black rounded-sm bg-slate-100 m-2 overflow-hidden"
+      >
+        <div v-if="imagePreview == null || imagePreview == ''">
+          <div>
+            <svg
+              t="1730006993864"
+              class="icon"
+              viewBox="0 0 1024 1024"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              p-id="11641"
+              width="32"
+              height="32"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
             >
-              Notifications
-            </h2>
-            <p class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-100">
-              We'll always let you know about important changes, but you pick
-              what else you want to hear about.
-            </p>
-
-            <div class="mt-10 space-y-10">
-              <fieldset>
-                <legend
-                  class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100"
-                >
-                  By Email
-                </legend>
-                <div class="mt-6 space-y-6">
-                  <div class="relative flex gap-x-3">
-                    <div class="flex h-6 items-center">
-                      <input
-                        id="comments"
-                        name="comments"
-                        type="checkbox"
-                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      />
-                    </div>
-                    <div class="text-sm leading-6">
-                      <label
-                        for="comments"
-                        class="font-medium text-gray-900 dark:text-gray-100"
-                        >Comments</label
-                      >
-                      <p class="text-gray-500 dark:text-gray-100">
-                        Get notified when someones posts a comment on a posting.
-                      </p>
-                    </div>
-                  </div>
-                  <div class="relative flex gap-x-3">
-                    <div class="flex h-6 items-center">
-                      <input
-                        id="candidates"
-                        name="candidates"
-                        type="checkbox"
-                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      />
-                    </div>
-                    <div class="text-sm leading-6">
-                      <label
-                        for="candidates"
-                        class="font-medium text-gray-900 dark:text-gray-100"
-                        >Candidates</label
-                      >
-                      <p class="text-gray-500 dark:text-gray-100">
-                        Get notified when a candidate applies for a job.
-                      </p>
-                    </div>
-                  </div>
-                  <div class="relative flex gap-x-3">
-                    <div class="flex h-6 items-center">
-                      <input
-                        id="offers"
-                        name="offers"
-                        type="checkbox"
-                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      />
-                    </div>
-                    <div class="text-sm leading-6">
-                      <label
-                        for="offers"
-                        class="font-medium text-gray-900 dark:text-gray-100"
-                        >Offers</label
-                      >
-                      <p class="text-gray-500 dark:text-gray-100">
-                        Get notified when a candidate accepts or rejects an
-                        offer.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </fieldset>
-              <fieldset>
-                <legend
-                  class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100"
-                >
-                  Push Notifications
-                </legend>
-                <p
-                  class="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-100"
-                >
-                  These are delivered via SMS to your mobile phone.
-                </p>
-                <div class="mt-6 space-y-6">
-                  <div class="flex items-center gap-x-3">
-                    <input
-                      id="push-everything"
-                      name="push-notifications"
-                      type="radio"
-                      class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                    <label
-                      for="push-everything"
-                      class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
-                      >Everything</label
-                    >
-                  </div>
-                  <div class="flex items-center gap-x-3">
-                    <input
-                      id="push-email"
-                      name="push-notifications"
-                      type="radio"
-                      class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                    <label
-                      for="push-email"
-                      class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
-                      >Same as email</label
-                    >
-                  </div>
-                  <div class="flex items-center gap-x-3">
-                    <input
-                      id="push-nothing"
-                      name="push-notifications"
-                      type="radio"
-                      class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                    <label
-                      for="push-nothing"
-                      class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
-                      >No push notifications</label
-                    >
-                  </div>
-                </div>
-              </fieldset>
-            </div>
+              <path
+                d="M512 1024C229.226667 1024 0 794.773333 0 512S229.226667 0 512 0s512 229.226667 512 512-229.226667 512-512 512z m-42.666667-554.666667h-170.666666a42.666667 42.666667 0 1 0 0 85.333334h170.666666v170.666666a42.666667 42.666667 0 1 0 85.333334 0v-170.666666h170.666666a42.666667 42.666667 0 1 0 0-85.333334h-170.666666v-170.666666a42.666667 42.666667 0 1 0-85.333334 0v170.666666z"
+                fill="#1296db"
+                p-id="11642"
+              ></path>
+            </svg>
           </div>
         </div>
-
-        <div class="mt-6 flex items-center justify-end gap-x-6">
-          <button
-            type="button"
-            class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Save
-          </button>
+        <div v-else>
+          <img
+            :src="imagePreview"
+            class="absolute inset-0 w-full h-full object-cover"
+            alt="Image Preview"
+          />
         </div>
-      </form>
+      </label>
+      <input
+        id="file-input"
+        type="file"
+        accept="image/*"
+        @change="handleFileUpload"
+        style="display: none"
+      />
+
+      <TagSelect @update:selectedTags="handleSelectedTags" />
+
+      <h2 class="text-white font-bold m-2">site private or public:</h2>
+      <div class="flex items-center justify-center">
+        <Switch
+          v-model="status"
+          :class="status ? 'bg-pink-600' : 'bg-lime-400'"
+          @click="switchStatus()"
+          class="relative inline-flex h-6 w-11 items-center rounded-full border-2 border-gray-500"
+        >
+          <span class="sr-only">Enable notifications</span>
+          <span
+            :class="status ? 'translate-x-6' : 'translate-x-1'"
+            class="inline-block h-4 w-4 transform rounded-full bg-white transition"
+          />
+        </Switch>
+        <h2 class="font-bold mx-3 text-red-400" v-if="status">private</h2>
+        <h2 class="font-bold mx-3 text-green-300" v-else>public</h2>
+      </div>
+
+      {{ selectedTags }} , {{ status }}
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2" @click="uploadImage"> upload Image </button>
     </div>
   </div>
 </template>
 
-<script setup>
-import { PhotoIcon, UserCircleIcon } from "@heroicons/vue/24/solid";
-const theme=  useState("theme");
+<script setup lang="ts">
+const theme = useState("theme");
+const selectedFile = ref<any>(null);
+const imagePreview = ref<any>(null);
+const selectedTags = ref<number[]>([]);
+const status = ref<number>(0);
+
+const handleFileUpload = (event: any) => {
+  const file = event.target.files[0];
+  if (file.size > 1024 * 1024 * 15) {
+    alert("图片大小不能超过15MB");
+    return;
+  }
+  if (file) {
+    selectedFile.value = file;
+    imagePreview.value = URL.createObjectURL(file);
+  }
+};
+
+const handleSelectedTags = (tags: any) => {
+  selectedTags.value = tags.map((tag: any) => tag.id);
+};
+
+function switchStatus(): void {
+  status.value = status.value === 0 ? 1 : 0;
+}
+
+async function uploadImage() {
+  if (!selectedFile.value) {
+    alert("请选择图片");
+  } else if (selectedTags.value == null || selectedTags.value.length == 0) {
+    alert("至少选择一个标签");
+  } else {
+    const formData = new FormData();
+    formData.append("file", selectedFile.value);
+    formData.append("tags", selectedTags.value.join(","));
+    formData.append("status", status.value.toString());
+
+    try{
+      const response = await useFetch("/img/upload",{
+        method: "POST",
+        baseURL: useRuntimeConfig().public.baseURL,
+        headers:{ 
+          "token": localStorage.getItem("token") || ""
+         },
+        body: formData
+      });
+      const res:any = response.data.value
+      if(res.code == 1){
+        alert("上传成功")
+      }else{
+        alert("上传失败")
+      }
+    }catch(e){
+      alert("请求失败")
+    }
+  }
+}
 </script>
