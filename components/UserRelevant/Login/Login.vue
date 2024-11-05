@@ -120,23 +120,21 @@ async function submitForm() {
     await useFetch("/user/login", {
       baseURL: config.public.baseURL,
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: {
         email: emailinfo.value,
         password: passwordinfo.value,
       },
     }).then((res:any) => {
       if(res.data.value.code == 0){
-          alert(res.data.value.msg)
+          ElMessage.error(res.data.value.msg)
       }else if(res.data.value.code == 1){
-          alert(res.data.value.msg)
+          ElMessage.success(res.data.value.msg)
           localStorage.setItem("token", res.data.value.data.token);
           localStorage.setItem("userId", res.data.value.data.userId);
       } 
     });
   } catch (error) {
+    ElMessage.error("请求接口失败")
     console.error("请求接口失败",error);
   }
   console.log("...")

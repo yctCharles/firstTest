@@ -155,8 +155,12 @@ async function submitRegister(){
             email: emailmessage.value,
             password: passwordmessage.value,
         },
-    }).then((res) => {
-        console.log(res.data.value);
+    }).then((res:any) => {
+      if(res.data.value.code == 0){
+          ElMessage.error(res.data.value.msg)
+      }else if(res.data.value.code == 1){
+          ElMessage.success(res.data.value.data)
+      } 
     })
 }
 

@@ -2,13 +2,19 @@
   <div class="flex flex-col w-full h-screen" :class="theme">
     <!-- <p>Slug: {{ $route.params.slug }}</p> -->
     <SearchHeader />
-    <div class="flex flex-row w-full adapt bg-slate-300 dark:bg-slate-800">
-      <div class="w-1/6 h-full bg-slate-200 dark:bg-slate-700 p-2 flex flex-col">
+    <div
+      class="flex flex-row w-full adapt bg-slate-300 dark:bg-slate-800 mt-20"
+    >
+      <div
+        class="w-1/6 h-full bg-slate-200 dark:bg-slate-700 p-2 flex flex-col"
+      >
         <!-- <h1 v-for="tag in tagList" :key="tag" class="m-2">Tag :{{ tag }}</h1> -->
         <span class="font-bold text-lg m-2 text-slate-400 dark:text-white">
           图片信息:
         </span>
-        <h2 class="ml-2 text-lg text-slate-700 dark:text-white font-bold"> 尺寸： {{ wallobj.width }} x {{ wallobj.height }}</h2>
+        <h2 class="ml-2 text-lg text-slate-700 dark:text-white font-bold">
+          尺寸： {{ wallobj.width }} x {{ wallobj.height }}
+        </h2>
         <span class="font-bold text-lg m-2 text-slate-400 dark:text-white">
           相关标签:
         </span>
@@ -57,7 +63,7 @@
               stroke="currentColor"
               class="size-6 stroke-orange-400 cursor-pointer"
               :class="{
-                'fill-yellow-200':isCollection
+                'fill-yellow-200': isCollection,
               }"
               @click="collectionImage"
             >
@@ -79,9 +85,8 @@
               class="size-6 stroke-pink-400 stroke-2 cursor-pointer"
               @click="likeImage"
               :class="{
-                 'fill-pink-200':isLike
-              }
-              "
+                'fill-pink-200': isLike,
+              }"
             >
               <path
                 stroke-linecap="round"
@@ -137,7 +142,7 @@ await useFetch("/collection/list", {
   params: {
     userId: userId,
     wallpaperId: wallPaperId,
-  }
+  },
 }).then((res) => {
   const d: any = res.data.value;
   isCollection.value = d.data;
@@ -148,16 +153,16 @@ await useFetch("/like/getAll/" + `${wallPaperId}`, {
   baseURL: useRuntimeConfig().public.baseURL,
 }).then((res) => {
   const d: any = res.data.value;
-  count.value= d.data;
-})
+  count.value = d.data;
+});
 
-await useFetch("/img/get/"+`${wallPaperId}`, {
+await useFetch("/img/get/" + `${wallPaperId}`, {
   method: "GET",
   baseURL: useRuntimeConfig().public.baseURL,
 }).then((res) => {
-  const d:any = res.data.value;
+  const d: any = res.data.value;
   wallobj.value = d.data;
-})
+});
 
 await useFetch("/like/islike", {
   method: "GET",
@@ -165,15 +170,15 @@ await useFetch("/like/islike", {
   params: {
     userId: userId,
     wallpaperId: wallPaperId,
-  }
+  },
 }).then((res) => {
   const d: any = res.data.value;
   isLike.value = d.data;
 });
 
-
 function downloadImage() {
-  const url: any = route.query.url?.toString();
+  //const url: any = route.query.url?.toString(); 不再使用 query 参数，而是使用 wallobj.value.url
+  const url :any = wallobj.value.url;
   const img = new Image();
   img.crossOrigin = "Anonymous"; // 允许跨域加载
   img.src = url;
@@ -185,7 +190,7 @@ function downloadImage() {
     canvas.height = img.height;
     ctx.drawImage(img, 0, 0);
 
-    canvas.toBlob((blob:any) => {
+    canvas.toBlob((blob: any) => {
       const link = document.createElement("a");
       const mimeType = blob.type; // 获取 MIME 类型
       const extension = mimeType.split("/")[1]; // 获取后缀
@@ -200,56 +205,65 @@ function downloadImage() {
   };
 
   img.onerror = (error) => {
-    alert("图片跨域无法下载，请手动复制链接下载");
+    ElMessage({
+      message: "图片跨域无法下载，请手动复制链接下载",
+      type: "error",
+    });
     console.error("Image loading failed:", error);
   };
 }
 
-
 function collectionImage() {
-   const action:number = isCollection.value ? 2 : 1;
-   useFetch("/collection/"+`${action}`, {
-     method: "POST",
-     baseURL: useRuntimeConfig().public.baseURL,
-     params: {
-       userId: userId,
-       wallpaperId: wallPaperId,
-     },
-   }).then((res) => {
-     const d: any = res.data.value;
-     if(d.code==1){
-      alert(d.data);
-     }else{
-      alert(d.msg);
-     }
-     if(action==1){
-       isCollection.value = true;
-     }else{
-       isCollection.value = false;
-     }
-   });
-}
-
-function likeImage(){
-    if(!isLike.value){
-      useFetch("/like/action", {
-        method: "POST",
-        baseURL: useRuntimeConfig().public.baseURL,
-        params: {
-          userId: userId,
-          wallpaperId: wallPaperId,
-        },
-      }).then((res) => {
-        const d: any = res.data.value;
-        alert(d.data);
-        count.value++;
-        isLike.value = true;
-      
+  const action: number = isCollection.value ? 2 : 1;
+  useFetch("/collection/" + `${action}`, {
+    method: "POST",
+    baseURL: useRuntimeConfig().public.baseURL,
+    params: {
+      userId: userId,
+      wallpaperId: wallPaperId,
+    },
+  }).then((res) => {
+    const d: any = res.data.value;
+    if (d.code == 1) {
+      ElMessage({
+        message: d.data,
+        type: "success",
       });
-    }else{
+    } else {
+      ElMessage({
+        message: d.msg,
+        type: "error",
+      });
     }
+    if (action == 1) {
+      isCollection.value = true;
+    } else {
+      isCollection.value = false;
+    }
+  });
 }
 
+function likeImage() {
+  if (!isLike.value) {
+    useFetch("/like/action", {
+      method: "POST",
+      baseURL: useRuntimeConfig().public.baseURL,
+      params: {
+        userId: userId,
+        wallpaperId: wallPaperId,
+      },
+    }).then((res) => {
+      const d: any = res.data.value;
+      ElMessage({
+        message: d.data,
+        type: "success",
+      });
+      count.value++;
+      isLike.value = true;
+    });
+  } else {
+  }
+}
 </script>
 
 <style scoped>

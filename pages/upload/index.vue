@@ -1,8 +1,11 @@
 <template>
-  <div class="flex flex-col w-full" :class="theme">
+  <div
+    class="flex flex-col w-full h-screen bg-cyan-50 dark:bg-slate-600"
+    :class="theme"
+  >
     <SearchHeader />
     <div
-      class="flex flex-col items-center justify-center w-2/3 h-full m-auto bg-slate-400"
+      class="flex flex-col items-center justify-center w-2/3 h-2/3 m-auto bg-slate-400 mt-20"
     >
       <h2 class="text-white font-bold m-2">click upload image:</h2>
       <label
@@ -67,7 +70,12 @@
       </div>
 
       {{ selectedTags }} , {{ status }}
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2" @click="uploadImage"> upload Image </button>
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2"
+        @click="uploadImage"
+      >
+        upload Image
+      </button>
     </div>
   </div>
 </template>
@@ -82,7 +90,10 @@ const status = ref<number>(0);
 const handleFileUpload = (event: any) => {
   const file = event.target.files[0];
   if (file.size > 1024 * 1024 * 15) {
-    alert("图片大小不能超过15MB");
+    ElMessage({
+      message: "图片大小不能超过15MB",
+      type: "error",
+    });
     return;
   }
   if (file) {
@@ -101,32 +112,47 @@ function switchStatus(): void {
 
 async function uploadImage() {
   if (!selectedFile.value) {
-    alert("请选择图片");
+    ElMessage({
+      message: "请选择图片",
+      type: "error",
+    });
   } else if (selectedTags.value == null || selectedTags.value.length == 0) {
-    alert("至少选择一个标签");
+    ElMessage({
+      message: "至少选择一个标签",
+      type: "error",
+    });
   } else {
     const formData = new FormData();
     formData.append("file", selectedFile.value);
     formData.append("tags", selectedTags.value.join(","));
     formData.append("status", status.value.toString());
 
-    try{
-      const response = await useFetch("/img/upload",{
+    try {
+      const response = await useFetch("/img/upload", {
         method: "POST",
         baseURL: useRuntimeConfig().public.baseURL,
-        headers:{ 
-          "token": localStorage.getItem("token") || ""
-         },
-        body: formData
+        headers: {
+          token: localStorage.getItem("token") || "",
+        },
+        body: formData,
       });
-      const res:any = response.data.value
-      if(res.code == 1){
-        alert("上传成功")
-      }else{
-        alert("上传失败")
+      const res: any = response.data.value;
+      if (res.code == 1) {
+        ElMessage({
+          message: "上传成功",
+          type: "success",
+        });
+      } else {
+        ElMessage({
+          message: "上传失败",
+          type: "error",
+        });
       }
-    }catch(e){
-      alert("请求失败")
+    } catch (e) {
+      ElMessage({
+        message: "请求失败",
+        type: "error",
+      });
     }
   }
 }

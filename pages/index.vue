@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
    const theme=  useState("theme");
+   
   //   onMounted(async () => {
   //       await useFetch("/api",{
   //           method: "GET",

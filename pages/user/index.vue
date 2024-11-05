@@ -8,11 +8,11 @@
         <div
           class="useImg rounded-full w-32 h-32 bg-pink-500 flex justify-center items-center mx-2"
         >
-          <h1>useImg</h1>
+          <img :src="userInfo?.userUrl || '/img/blob.png'" alt="用户头像" class="w-full h-full rounded-full object-cover" />
         </div>
         <div class="flex flex-col text-left h-32 mx-2 justify-center">
-          <h1 class="text-2xl font-bold">User Name</h1>
-          <h1 class="text-sm">User Email</h1>
+          <h1 class="text-2xl font-bold">{{ userInfo?.userName }}</h1>
+          <h1 class="text-sm">{{ userInfo?.userEmail }}</h1>
           <h1 class="text-sm">Create Time</h1>
         </div>
         <div class="ml-auto relative">
@@ -64,7 +64,7 @@
         class="w-11/12 rounded-sm bg-slate-200 flex justify-center items-center h-1/2 p-2 mx-auto"
       >
         <KeepAlive>
-            <component :is="somepage" />
+          <component :is="somepage" />
         </KeepAlive>
       </div>
     </div>
@@ -72,12 +72,56 @@
 </template>
 
 <script setup lang="ts">
+const theme = useState("theme");
+const Collection = resolveComponent("Collection");
+const Subscribe = resolveComponent("Subscribe");
+const Myupload = resolveComponent("Myupload");
+const DataPage = resolveComponent("Datapage");
+const somepage = ref(Collection);
+const userInfo = ref<UserInfo>();
 
-   const theme = useState("theme");
-   const Collection = resolveComponent("Collection");
-   const Subscribe = resolveComponent("Subscribe");
-   const Myupload = resolveComponent("Myupload");
-   const DataPage = resolveComponent("Datapage");
-   const somepage = ref(Collection);
-
+interface UserInfo {
+  userName: string;
+  userEmail: string;
+  userUrl: string;
+  userSex: string;
+  description: string;
+}
+onBeforeMount( () => {
+try {
+ // if(import.meta.client) {  //process.client 服务端无法获取到localStorage里的信息，这里必须客户端执行
+    useFetch("/user/getInfo/" + `${localStorage.getItem("userId")}`, {
+    method: "GET",
+    baseURL: useRuntimeConfig().public.baseURL,
+    headers: {
+      token: localStorage.getItem("token") || "",
+    },
+    onResponseError({ response }) {
+      if (response.status === 401) {
+        navigateTo("/");
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        ElMessage({
+          message:"请登录",
+          type: "error",
+        });
+      }
+    }
+  }).then((res) => {
+    const d: any = res.data.value;
+    // d: code , data ,msg
+    if(d.code==1){
+       userInfo.value = d.data;
+    }
+  });
+//}
+} catch (error) {
+  ElMessage({
+          message:"请求失败",
+          type: "error",
+        });
+  console.error("请求发生错误", error);
+  navigateTo("/");
+}
+})
 </script>

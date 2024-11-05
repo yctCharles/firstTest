@@ -5,9 +5,9 @@
       <li
         v-for="(tag, index) in tagList"
         :key="index"
-        class="rounded-lg border border-sky-100 bg-sky-50 text-center px-2 m-2 py-0.5 dark:text-sky-300 dark:border-sky-500/15 dark:bg-sky-500/10 cursor-pointer select-none"
+        class="rounded-lg border border-sky-100 bg-sky-50 text-center px-2 m-2 py-0.5 dark:text-gray-50 dark:border-sky-500/15 dark:bg-slate-700 cursor-pointer select-none"
         @click="toggleTag(tag)"
-        :class="{ 'bg-sky-600 text-white': selectedTags.includes(tag) }"
+        :class="{ 'bg-sky-600 text-white dark:bg-slate-500 dark:text-green-300 dark:border-white': selectedTags.includes(tag) }"
       >
         {{ tag.name }}
       </li>
