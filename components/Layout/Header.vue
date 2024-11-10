@@ -43,7 +43,7 @@
     <div class="w-20 h-100% flex items-center justify-center m-2">
       <SwitchTheme />
     </div>
-    <div class="w-20 h-100% flex items-center justify-center m-2 relative">
+    <div class="w-20 h-100% flex items-center justify-center m-2 relative group">
       <div @click="showLogin()">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -65,10 +65,10 @@
         </h4>
         <div
           v-if="testLogin"
-          class="absolute dark:text-white font-bold text-slate-600 olute top-11 right-5 w-20 h-20 flex items-center justify-center"
+          class="absolute dark:text-white font-bold text-slate-600 olute top-20 right-5 w-20 h-8 flex items-center justify-center bg-white dark:bg-slate-900 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:border-2 hover:border-slate-300"
         >
-          <a class="w-full h-full" @click="loginOut">
-            <h4>退出</h4>
+          <a class="m-auto cursor-pointer" @click="loginOut">
+            <h4 class="text-black font-bold dark:text-slate-300">退出</h4>
           </a>
         </div>
       </div>
@@ -90,7 +90,7 @@ const Login = resolveComponent("Login");
 const Register = resolveComponent("Register");
 const page = ref("Login");
 
-const testLogin = ref(false);
+const testLogin = useState("testLogin");
 const showpage = ref(false);
 
 onMounted(() => {
@@ -109,6 +109,8 @@ const showLogin = () => {
 };
 
 const loginOut = () => {
+  userStore().setUserId("");
+  userStore().setToken("");
   localStorage.removeItem("token");
   localStorage.removeItem("userId");
   testLogin.value = false;

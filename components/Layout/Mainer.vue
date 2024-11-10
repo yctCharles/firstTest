@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
   // const router = useRouter();
+
   const params = ref("");
   const gotoSearch = async () => {
     await navigateTo({

@@ -14,7 +14,9 @@
     "@heroicons/vue": "^2.1.5",
     "@nuxt/ui-pro": "^1.4.3",
     "@nuxtjs/color-mode": "^3.5.1",
+    "@pinia/nuxt": "^0.5.0",
     "nuxt": "^3.13.0",
+    "pinia": "^2.2.6",
     "uuid": "^10.0.0",
     "vue": "latest",
     "vue-router": "latest"
@@ -22,7 +24,11 @@
   "devDependencies": {
     "@element-plus/nuxt": "^1.0.10",
     "@nuxtjs/tailwindcss": "^6.12.1",
+    "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
     "@types/uuid": "^10.0.0",
     "element-plus": "^2.8.5"
+  },
+  "overrides": {
+    "vue": "latest"
   }
 }

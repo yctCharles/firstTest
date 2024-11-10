@@ -136,17 +136,19 @@ await useFetch("/user/get/" + `${userId}`, {
   user.value = d.data;
 });
 
-await useFetch("/collection/list", {
-  method: "GET",
-  baseURL: useRuntimeConfig().public.baseURL,
-  params: {
-    userId: userId,
-    wallpaperId: wallPaperId,
-  },
-}).then((res) => {
-  const d: any = res.data.value;
-  isCollection.value = d.data;
-});
+if (userStore().userId) {
+  await useFetch("/collection/list", {
+    method: "GET",
+    baseURL: useRuntimeConfig().public.baseURL,
+    params: {
+      userId: userStore().userId,
+      wallpaperId: wallPaperId,
+    },
+  }).then((res) => {
+    const d: any = res.data.value;
+    isCollection.value = d.data;
+  });
+}
 
 await useFetch("/like/getAll/" + `${wallPaperId}`, {
   method: "GET",
@@ -164,21 +166,24 @@ await useFetch("/img/get/" + `${wallPaperId}`, {
   wallobj.value = d.data;
 });
 
-await useFetch("/like/islike", {
-  method: "GET",
-  baseURL: useRuntimeConfig().public.baseURL,
-  params: {
-    userId: userId,
-    wallpaperId: wallPaperId,
-  },
-}).then((res) => {
-  const d: any = res.data.value;
-  isLike.value = d.data;
-});
+//如果用户已经登录，则获取用户是否已经点赞
+if (userStore().userId) {
+  await useFetch("/like/islike", {
+    method: "GET",
+    baseURL: useRuntimeConfig().public.baseURL,
+    params: {
+      userId: userStore().userId,
+      wallpaperId: wallPaperId,
+    },
+  }).then((res) => {
+    const d: any = res.data.value;
+    isLike.value = d.data;
+  });
+}
 
 function downloadImage() {
   //const url: any = route.query.url?.toString(); 不再使用 query 参数，而是使用 wallobj.value.url
-  const url :any = wallobj.value.url;
+  const url: any = wallobj.value.url;
   const img = new Image();
   img.crossOrigin = "Anonymous"; // 允许跨域加载
   img.src = url;
@@ -214,12 +219,20 @@ function downloadImage() {
 }
 
 function collectionImage() {
+  if (!userStore().userId) {
+    ElMessage({
+      message: "请先登录",
+      type: "error",
+    });
+    return;
+  }
+
   const action: number = isCollection.value ? 2 : 1;
   useFetch("/collection/" + `${action}`, {
     method: "POST",
     baseURL: useRuntimeConfig().public.baseURL,
     params: {
-      userId: userId,
+      userId: userStore().userId,
       wallpaperId: wallPaperId,
     },
   }).then((res) => {
@@ -244,12 +257,19 @@ function collectionImage() {
 }
 
 function likeImage() {
+  if (!userStore().userId) {
+    ElMessage({
+      message: "请先登录",
+      type: "error",
+    });
+    return;
+  }
   if (!isLike.value) {
     useFetch("/like/action", {
       method: "POST",
       baseURL: useRuntimeConfig().public.baseURL,
       params: {
-        userId: userId,
+        userId: userStore().userId,
         wallpaperId: wallPaperId,
       },
     }).then((res) => {
@@ -261,7 +281,6 @@ function likeImage() {
       count.value++;
       isLike.value = true;
     });
-  } else {
   }
 }
 </script>

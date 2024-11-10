@@ -36,8 +36,8 @@
           Sign in to your account
         </h2>
       </div>
-     <form class="" method="POST" @submit="submitForm">
-      <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <form class="" method="POST" @submit.prevent="submitForm">
+        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <div>
             <label
               for="email"
@@ -93,24 +93,23 @@
               Sign in
             </button>
           </div>
-          </div>
-        </form>
-        <p class="mt-10 text-center text-sm text-gray-500 dark:text-lime-100">
-          Not a member?
-          {{ " " }}
-          <a
-            @click="$emit('componentChange', { message: 'Register' })"
-            class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 dark:text-lime-100"
-          >
-            create a account
-          </a>
-        </p>
-      </div>
+        </div>
+      </form>
+      <p class="mt-10 text-center text-sm text-gray-500 dark:text-lime-100">
+        Not a member?
+        {{ " " }}
+        <a
+          @click="$emit('componentChange', { message: 'Register' })"
+          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 dark:text-lime-100"
+        >
+          create a account
+        </a>
+      </p>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts" name="login">
-
 const theme = useState("theme");
 const emailinfo = ref("");
 const passwordinfo = ref("");
@@ -124,20 +123,32 @@ async function submitForm() {
         email: emailinfo.value,
         password: passwordinfo.value,
       },
-    }).then((res:any) => {
-      if(res.data.value.code == 0){
-          ElMessage.error(res.data.value.msg)
-      }else if(res.data.value.code == 1){
-          ElMessage.success(res.data.value.msg)
-          localStorage.setItem("token", res.data.value.data.token);
-          localStorage.setItem("userId", res.data.value.data.userId);
-      } 
+    }).then((res: any) => {
+      if (res.data.value.code == 0) {
+        ElMessage({
+          message: res.data.value.msg,
+          type: "error",
+        });
+        return;
+      } else if (res.data.value.code == 1) {
+        userStore().setToken(res.data.value.data.token);
+        userStore().setUserId(res.data.value.data.userId);
+        localStorage.setItem("token", res.data.value.data.token);
+        localStorage.setItem("userId", res.data.value.data.userId);
+        const islogin = useState("testLogin");
+        islogin.value = true;
+        ElMessage({
+          message: res.data.value.msg,
+          type: "success",
+          duration:2500
+        });
+      }
     });
   } catch (error) {
-    ElMessage.error("请求接口失败")
-    console.error("请求接口失败",error);
+    ElMessage.error("请求接口失败");
+    console.error("请求接口失败", error);
+    return;
   }
-  console.log("...")
 }
 </script>
 

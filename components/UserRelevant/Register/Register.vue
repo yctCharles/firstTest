@@ -38,7 +38,7 @@
       </div>
 
       <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form class="space-y-6" method="POST" @submit="submitRegister">
+        <form class="space-y-6" method="POST" @submit.prevent="submitRegister">
           <div>
             <label
               for="email"

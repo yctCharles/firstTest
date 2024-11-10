@@ -87,6 +87,16 @@ const imagePreview = ref<any>(null);
 const selectedTags = ref<number[]>([]);
 const status = ref<number>(0);
 
+if(!userStore().token || !userStore().userId){
+  ElMessage({
+    message: "请先登录",
+    type: "error",
+    duration: 2000
+  })
+  navigateTo('/')
+}
+
+
 const handleFileUpload = (event: any) => {
   const file = event.target.files[0];
   if (file.size > 1024 * 1024 * 15) {
