@@ -12,7 +12,7 @@
 
       <div class="w-11/12 grid grid-cols-6 gap-x-3">
         <div v-for="item in imgList" :key="item.id">
-          <Card :wallPaperObj="item" />
+          <Card :wallPaperObj="item" :width="280" :height="160"/>
         </div>
       </div>
 

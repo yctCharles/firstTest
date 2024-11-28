@@ -3,7 +3,7 @@
     class="flex w-full h-screen justify-center bg-cyan-200 dark:bg-slate-700"
     :class="theme"
   >
-    <div class="flex flex-col w-1/2 bg-cyan-100 dark:bg-slate-600 rounded-lg">
+    <div class="flex flex-col w-3/4 bg-cyan-100 dark:bg-slate-600 rounded-lg">
       <div class="flex felx-row w-full mt-5 mx-3">
         <div
           class="useImg rounded-full w-32 h-32 bg-pink-500 flex justify-center items-center mx-2"
@@ -42,7 +42,7 @@
             <h1 class="text-sm text-slate-500 dark:text-gray-50">{{ userInfo?.description }}</h1>
           </div>
       <div
-        class="flex flex-row w-2/3 border-2 p-1 border-cyan-200 dark:border-slate-500 rounded-lg justify-center my-8"
+        class="flex flex-row w-2/3 border-2 p-1 border-cyan-200 dark:border-slate-500 rounded-lg justify-center my-8 mx-auto"
       >
         <button
           class="h-full w-1/4 mx-2 bg-sky-300"
@@ -70,7 +70,7 @@
         </button>
       </div>
       <div
-        class="w-11/12 rounded-sm bg-slate-200 flex justify-center items-center h-1/2 p-2 mx-auto"
+        class="w-11/12 rounded-sm bg-slate-200 h-1/2 p-2 mx-auto dark:bg-slate-500"
       >
         <KeepAlive>
           <component :is="somepage" />
@@ -174,8 +174,6 @@ const somepage = ref(Collection);
 const userInfo = ref<UserInfo>();
 const selectedFile = ref<File | null>(null);
 const visibleUser = ref(false);
-
-
 
 const userIamgeUpload = (event: any) => {
   const file = event.target.files[0];
