@@ -68,8 +68,6 @@
         <h2 class="font-bold mx-3 text-red-400" v-if="status">private</h2>
         <h2 class="font-bold mx-3 text-green-300" v-else>public</h2>
       </div>
-
-      {{ selectedTags }} , {{ status }}
       <button
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2"
         @click="uploadImage"
@@ -87,15 +85,14 @@ const imagePreview = ref<any>(null);
 const selectedTags = ref<number[]>([]);
 const status = ref<number>(0);
 
-if(!userStore().token || !userStore().userId){
+if (!userStore().token || !userStore().userId) {
   ElMessage({
     message: "请先登录",
     type: "error",
-    duration: 2000
-  })
-  navigateTo('/')
+    duration: 2000,
+  });
+  navigateTo("/");
 }
-
 
 const handleFileUpload = (event: any) => {
   const file = event.target.files[0];
