@@ -1,11 +1,11 @@
 <template>
   <div
-    class="flex flex-col items-center bg-sky-200 dark:bg-slate-800"
+    class="flex flex-col items-center h-screen bg-sky-200 dark:bg-slate-800"
     :class="theme"
   >
     <SearchHeader />
     <div
-      class="flex flex-col w-11/12 dark:bg-slate-300 bg-white mt-24 p-4 rounded-s items-center"
+      class="flex flex-col w-10/12 dark:bg-slate-300 bg-white mt-24 p-4 rounded-s items-center"
     >
       <h1
         class="w-full bg-lime-200 dark:bg-slate-400 text-2xl font-bold text-center mb-4 text-sky-500 dark:text-lime-100"
@@ -19,7 +19,7 @@
       <div
         v-for="tag in pageResult?.record"
         :key="tag.id"
-        class="flex flex-row items-center w-3/4 mb-1 bg-green-300 dark:bg-slate-400 dark:text-green-300 ml-12 p-4"
+        class="flex flex-row items-center w-3/4 mb-1 bg-green-300 dark:bg-slate-400 dark:text-green-300 ml-12 p-3"
       >
         <h2 class="text-xl font-bold mb-2 mr-4">{{ tag.name }}</h2>
         <h3 class="text-gray-500">{{ tag.views }} views</h3>

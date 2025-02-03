@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="flex flex-row justify-between items-center h-20 bg-cyan-100 dark:bg-slate-700 fixed w-full z-50"
+    class="flex flex-row justify-between items-center h-20 bg-cyan-100 dark:bg-slate-700 fixed w-full z-50 shadow-lg"
   >
     <div class="flex justify-center items-center w-64">
       <NuxtLink to="/" class="w-full h-full">
@@ -53,8 +53,8 @@ const gotoSearch = async () => {
     path: "/search",
     query: {
       q: params.value,
-    }
+    },
   });
-  window.location.reload()
+  window.location.reload();
 };
 </script>
