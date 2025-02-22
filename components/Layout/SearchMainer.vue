@@ -4,9 +4,13 @@
     class="w-full h-screen bg-cyan-100 dark:bg-slate-700 overflow-scroll"
   >
     <div
-      class="flex flex-col justify-center items-center w-full bg-sky-100 dark:bg-slate-600 py-5 mt-20"
+      class="flex flex-col justify-center items-center w-full bg-sky-100 dark:bg-slate-600 mt-20"
     >
-      <div class="w-full h-12 flex items-center">
+      <div class="fixed w-full top-20 left-0 z-10">
+        <FilterBox />
+      </div>
+
+      <div class="w-full h-12 flex items-center mt-14">
         <h1
           class="text-lg text-center text-indigo-500 dark:text-white leading-tight font-bold ml-5"
         >
@@ -43,7 +47,24 @@
 </template>
 
 <script setup lang="ts">
+interface SearchFilterState {
+  Resolution: string;
+  Date: string;
+  SearchWay: string;
+  SortWay: number;
+}
+
 const tname = defineProps(["tagname"]);
+const search = ref<SearchFilterState>();
+const getSearchFilter = () => {
+  console.log("上次标签:", searchStore().lastTag, "本次标签:", tname.tagname);
+  if (searchStore().tagName !== searchStore().lastTag) {
+    searchStore().resetSearch();
+    search.value = searchStore().search;
+  } else {
+    search.value = searchStore().search;
+  }
+};
 
 const handleScroll = (e: Event) => {
   const scrollTop = (e.target as HTMLElement).scrollTop;
@@ -94,6 +115,8 @@ async function pageSearch(pageNum: number, pageSize: number) {
 }
 
 onMounted(() => {
+  getSearchFilter();
+  console.log(search);
   pageSearch(1, 24);
 });
 </script>

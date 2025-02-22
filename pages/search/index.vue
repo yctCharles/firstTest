@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col w-full relative" :class="theme">
-    <SearchHeader />
+    <SearchHeader :tagname="q" />
     <SearchMainer :tagname="q" />
   </div>
 </template>

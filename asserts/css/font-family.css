@@ -1,0 +1,34 @@
+@font-face {
+    font-family: 'HFPuff';
+    src: url('../../public/font/HFPuff-2.ttf') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sounso';
+    src: url('../../public/font/No.019-Sounso-Quality-2.ttf') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SankeiCutePopanime';
+    src: url('../../public/font/SankeiCutePopanime-2.ttf') format('woff2');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'GongChang';
+    src: url('../../public/font/YeZiGongChangTangYingHei-2.ttf') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Yunmobei';
+    src: url('../../public/font/Yunmobei-enlogo-Blod-2.ttf') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}

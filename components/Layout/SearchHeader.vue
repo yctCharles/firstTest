@@ -32,6 +32,9 @@
           placeholder="Search you want to..."
           @keyup.enter="gotoSearch"
         />
+        <el-icon class="ml-2 hover:cursor-pointer" @click="gotoSearch"
+          ><Search style="width: 2rem; height: 2rem; color: #409eff"
+        /></el-icon>
       </div>
     </div>
 
@@ -46,9 +49,15 @@
 </template>
 
 <script setup lang="ts">
-const list: Ref<string[]> = ref(["test1", "test2", "test3"]);
+import { Search } from "@element-plus/icons-vue";
+
+const list: Ref<string[]> = ref(["Lastest", "Hot", "Popular", "Random"]);
+const tname = defineProps(["tagname"]);
 const params = ref("");
+params.value = tname.tagname;
 const gotoSearch = async () => {
+  searchStore().setLastTag(searchStore().tagName);
+  searchStore().setTagName(params.value);
   await navigateTo({
     path: "/search",
     query: {

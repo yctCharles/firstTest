@@ -3,7 +3,8 @@
 
   <h1>Public:</h1>
   <div
-    class="w-full flex flex-row flex-wrap max-h-45 items-center justify-center overflow-y-auto"
+    style="max-height: 20vh"
+    class="w-full flex flex-row flex-wrap max-h-45 items-center justify-center overflow-y-scroll"
   >
     <div
       v-for="item in publicImages"
@@ -15,7 +16,10 @@
   </div>
 
   <h1>Private:</h1>
-  <div class="w-full grid grid-cols-6 gap-1 max-h-40 overflow-y-auto">
+  <div
+    style="max-height: 20vh"
+    class="w-full flex flex-row flex-wrap max-h-45 items-center justify-center overflow-y-scroll"
+  >
     <div
       v-for="item in privateImages"
       :key="item.id"

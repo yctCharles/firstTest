@@ -19,10 +19,30 @@
       <div
         v-for="tag in pageResult?.record"
         :key="tag.id"
-        class="flex flex-row items-center w-3/4 mb-1 bg-green-300 dark:bg-slate-400 dark:text-green-300 ml-12 p-3"
+        class="flex flex-row items-center w-3/4 mb-1 bg-green-300 dark:bg-slate-400 dark:text-green-300 ml-12 h-16 px-3"
       >
-        <h2 class="text-xl font-bold mb-2 mr-4">{{ tag.name }}</h2>
-        <h3 class="text-gray-500">{{ tag.views }} views</h3>
+        <div
+          class="w-1/2 m-0 p-1 h-full flex flex-row items-center justify-start bg-green-400 dark:bg-slate-500"
+        >
+          <img
+            src="../../public/icon/tag1.svg"
+            alt="tag"
+            class="w-6 h-6 mr-2"
+          />
+          <h2 class="text-xl font-bold mb-2 mr-4">
+            {{ tag.name }}
+          </h2>
+        </div>
+        <div
+          class="w-1/5 m-0 p-1 h-full flex flex-row items-center justify-start bg-green-500 dark:bg-slate-600"
+        >
+          <img
+            src="../../public/icon/view2.svg"
+            alt="views"
+            class="w-6 h-6 mr-2"
+          />
+          <h3 class="text-gray-200 font-bold tag">{{ tag.views }}</h3>
+        </div>
       </div>
       <div class="mt-4 w-full flex items-center justify-center">
         <el-pagination
@@ -72,3 +92,16 @@ onMounted(() => {
   fetchPage(1, 10);
 });
 </script>
+
+<style scoped>
+.tag {
+  font-family: "Font", sans-serif;
+}
+
+@font-face {
+  font-family: "Font";
+  src: url("../../public/font/HFPuff-2.ttf") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+</style>
