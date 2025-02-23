@@ -6,15 +6,61 @@
       class="flex flex-row w-full adapt bg-slate-300 dark:bg-slate-800 mt-20"
     >
       <div
-        class="w-1/6 h-full bg-slate-200 dark:bg-slate-700 p-2 flex flex-col"
+        class="w-1/6 h-full bg-slate-300 dark:bg-slate-700 p-2 flex flex-col"
       >
         <!-- <h1 v-for="tag in tagList" :key="tag" class="m-2">Tag :{{ tag }}</h1> -->
         <span class="font-bold text-lg m-2 text-slate-400 dark:text-white">
           图片信息:
         </span>
-        <h2 class="ml-2 text-lg text-slate-700 dark:text-white font-bold">
-          尺寸： {{ wallobj.width }} x {{ wallobj.height }}
-        </h2>
+        <span class="font-bold text-lg m-2 text-slate-400 dark:text-white">
+          尺寸:
+          <span
+            class="font-bold m-2 text-slate-700 dark:text-white flex justify-center items-center"
+            style="font-size: 1.5rem"
+          >
+            {{ wallobj.width }} x {{ wallobj.height }}
+          </span>
+        </span>
+
+        <span class="font-bold text-lg m-2 text-slate-400 dark:text-white">
+          色块:
+        </span>
+        <div class="flex flex-row w-full items-center justify-center">
+          <div class="flex flex-row w-4/5 h-8">
+            <div
+              class="flex-1 bg-red-500 hover:scale-125 hover:rounded-sm transition-transform"
+              v-if="wallobj.colourRed >= 100"
+            ></div>
+            <div
+              class="flex-1 bg-orange-500 hover:scale-125 hover:rounded-sm transition-transform"
+              v-if="wallobj.colourOrange >= 100"
+            ></div>
+            <div
+              class="flex-1 bg-yellow-500 hover:scale-125 hover:rounded-sm transition-transform"
+              v-if="wallobj.colourYellow >= 100"
+            ></div>
+            <div
+              class="flex-1 bg-green-500 hover:scale-125 hover:rounded-sm transition-transform"
+              v-if="wallobj.colourGreen >= 100"
+            ></div>
+            <div
+              class="flex-1 bg-blue-500 hover:scale-125 hover:rounded-sm transition-transform"
+              v-if="wallobj.colourBlue >= 100"
+            ></div>
+            <div
+              class="flex-1 bg-purple-500 hover:scale-125 hover:rounded-sm transition-transform"
+              v-if="wallobj.colourPurple >= 100"
+            ></div>
+            <div
+              class="flex-1 bg-gray-500 hover:scale-125 hover:rounded-sm transition-transform"
+              v-if="wallobj.colourGray >= 100"
+            ></div>
+            <div
+              class="flex-1 bg-white hover:scale-125 hover:rounded-sm transition-transform"
+              v-if="wallobj.colourWhite >= 100"
+            ></div>
+          </div>
+        </div>
         <span class="font-bold text-lg m-2 text-slate-400 dark:text-white">
           相关标签:
         </span>
@@ -24,14 +70,22 @@
         </span>
         <UserBanner :user="user" />
       </div>
-      <div class="w-5/6 h-full bg-slate-100 dark:bg-slate-600 flex flex-col">
+      <div class="w-5/6 h-full bg-slate-200 dark:bg-slate-600 flex flex-col">
         <div
-          class="flex justify-center items-center w-full h-5/6 bg-slate-50 m-2"
+          class="flex justify-center items-center w-full h-5/6 dark:bg-slate-900 bg-white m-2 rounded-sm"
         >
-          <img
+          <!-- <img
             :src="wallobj.url"
             class="w-full h-full object-cover"
             alt="图片未加载"
+          /> -->
+          <el-image
+            ref="imageRef"
+            style="width: 100%; height: 100%"
+            :src="wallobj.url"
+            :preview-src-list="new Array(wallobj.url)"
+            hide-on-click-modal
+            fit="contain"
           />
         </div>
         <div class="flex flex-row w-full h-1/6 justify-center items-center">
@@ -164,6 +218,7 @@ await useFetch("/img/get/" + `${wallPaperId}`, {
 }).then((res) => {
   const d: any = res.data.value;
   wallobj.value = d.data;
+  //console.log("图片信息：", wallobj.value);
 });
 
 //如果用户已经登录，则获取用户是否已经点赞

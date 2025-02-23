@@ -29,6 +29,22 @@
         </el-dropdown-menu>
       </template>
     </el-dropdown>
+
+    <el-dropdown @command="handleCommandColor">
+      <el-button type="primary" class="w-32 mr-5 p-0" style="padding: 0">
+        {{ selectColor
+        }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
+      </el-button>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item v-for="item in Color" :command="item">
+            <ColorBox
+              :color="item.slice(6, item.length).toLowerCase()"
+            ></ColorBox
+          ></el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
   </div>
 </template>
 
@@ -36,12 +52,17 @@
 import { ArrowDown } from "@element-plus/icons-vue";
 const selectResolution = ref<string>("Resolution");
 const selectDate = ref<string>("Date");
+const selectColor = ref<string>("Color");
 const handleCommand = (command: string) => {
   selectResolution.value = command;
 };
 
 const handleCommandDate = (command: string) => {
   selectDate.value = command;
+};
+
+const handleCommandColor = (command: string) => {
+  selectColor.value = command;
 };
 
 let Resolution = [
@@ -55,12 +76,27 @@ let Resolution = [
 
 let Date = ["LastDay", "LastWeek", "LastMonth", "LastYear", "AllTime"];
 
+let Color = [
+  "ColourRed",
+  "ColourOrange",
+  "ColourYellow",
+  "ColourGreen",
+  "ColourBlue",
+  "ColourPurple",
+  "ColourGray",
+  "ColourWhite",
+];
+
 watch(selectResolution, () => {
   searchStore().setSearch("Resolution", selectResolution.value);
 });
 
 watch(selectDate, () => {
   searchStore().setSearch("Date", selectDate.value);
+});
+
+watch(selectColor, () => {
+  searchStore().setSearch("Color", selectColor.value);
 });
 </script>
 

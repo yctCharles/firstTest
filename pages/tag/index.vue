@@ -22,7 +22,7 @@
         class="flex flex-row items-center w-3/4 mb-1 bg-green-300 dark:bg-slate-400 dark:text-green-300 ml-12 h-16 px-3"
       >
         <div
-          class="w-1/2 m-0 p-1 h-full flex flex-row items-center justify-start bg-green-400 dark:bg-slate-500"
+          class="w-6/12 m-0 p-1 h-full flex flex-row items-center justify-start bg-green-400 dark:bg-slate-500"
         >
           <img
             src="../../public/icon/tag1.svg"
@@ -34,7 +34,7 @@
           </h2>
         </div>
         <div
-          class="w-1/5 m-0 p-1 h-full flex flex-row items-center justify-start bg-green-500 dark:bg-slate-600"
+          class="w-4/12 m-0 p-1 h-full flex flex-row items-center justify-start bg-green-500 dark:bg-slate-600"
         >
           <img
             src="../../public/icon/view2.svg"
@@ -42,6 +42,16 @@
             class="w-6 h-6 mr-2"
           />
           <h3 class="text-gray-200 font-bold tag">{{ tag.views }}</h3>
+        </div>
+        <div
+          class="m-0 p-1 h-full flex flex-row items-center justify-start bg-green-600 dark:bg-slate-700 w-2/12"
+        >
+          <img
+            src="../../public/icon/img4.svg"
+            alt="views"
+            class="w-6 h-6 mr-2"
+          />
+          <h3 class="text-gray-200 font-bold tag">{{ tag.imgs }}</h3>
         </div>
       </div>
       <div class="mt-4 w-full flex items-center justify-center">
@@ -68,6 +78,7 @@ interface Tag {
   id: string;
   name: string;
   views: number;
+  imgs: number;
 }
 const theme = useState("theme");
 const pageResult = ref<PageResult<Tag>>();

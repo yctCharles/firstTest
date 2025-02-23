@@ -40,10 +40,12 @@
         <h1 class="text-blue-700 font-bold dark:text-slate-300">Forum</h1>
       </NuxtLink>
     </div>
-    <div class="w-20 h-100% flex items-center justify-center m-2">
+    <div class="w-20 h-100% flex items-center justify-start">
       <SwitchTheme />
     </div>
-    <div class="w-20 h-100% flex items-center justify-center m-2 relative group">
+    <div
+      class="w-20 h-100% flex items-center justify-center m-2 relative group"
+    >
       <div @click="showLogin()">
         <svg
           xmlns="http://www.w3.org/2000/svg"

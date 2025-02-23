@@ -8,7 +8,9 @@
       </NuxtLink>
     </div>
 
-    <div class="flex flex-row justify-center items-center h-full bg-sky-200">
+    <div
+      class="flex flex-row justify-center items-center h-full bg-sky-200 dark:bg-gray-200"
+    >
       <div
         class="border-r-2 border-r-gray-400 px-1 last:border-none"
         v-for="item in list"
@@ -51,7 +53,7 @@
 <script setup lang="ts">
 import { Search } from "@element-plus/icons-vue";
 
-const list: Ref<string[]> = ref(["Lastest", "Hot", "Popular", "Random"]);
+const list = ref<string[]>(["Lastest", "Hot", "Popular", "Random", "Upload"]);
 const tname = defineProps(["tagname"]);
 const params = ref("");
 params.value = tname.tagname;

@@ -4,6 +4,7 @@ export const searchStore = defineStore("searchFilter", () => {
         Resolution: "1280x720",
         Date: "AllTime",
         SearchWay: "Lastest",
+        Color: "All",
         SortWay: 0,
     })
 
@@ -19,6 +20,8 @@ export const searchStore = defineStore("searchFilter", () => {
             search.value.SearchWay = value as string
         } else if (type === "SortWay") {
             search.value.SortWay = value as number
+        } else if (type === "Color") {
+            search.value.Color = value as string
         }
     }
 
@@ -34,6 +37,7 @@ export const searchStore = defineStore("searchFilter", () => {
             Resolution: "1280x720",
             Date: "AllTime",
             SearchWay: "Lastest",
+            Color: "All",
             SortWay: 0,
         }
     }

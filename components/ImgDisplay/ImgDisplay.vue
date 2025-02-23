@@ -29,4 +29,6 @@ const { imgList, pageNum, totalPage } = defineProps([
   "pageNum",
   "totalPage",
 ]);
+
+console.log("图片列表：",imgList);
 </script>
