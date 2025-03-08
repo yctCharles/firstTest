@@ -17,7 +17,9 @@
     </div>
   </div>
 
-  <h1>Private:</h1>
+  <h1 class="text-xl font-bold mt-5 text-pink-600 dark:text-pink-400">
+    Private:
+  </h1>
   <div
     style="max-height: 20vh"
     class="w-full flex flex-row flex-wrap max-h-45 items-center justify-center overflow-y-scroll"

@@ -92,7 +92,10 @@ interface WallPapers {
   minUrl: string;
 }
 
-const pageResult = ref<PageResult<WallPapers>>();
+const pageResult = ref<PageResult<WallPapers>>({
+  total: 0,
+  record: [],
+});
 const imgMap = ref<Array<WallPapers[]>>([]);
 const currentPage = ref<number>(1);
 const totalPage = ref<number>(0);
@@ -108,7 +111,6 @@ async function pageSearch(pageNum: number, pageSize: number) {
       tagname: tname.tagname,
     },
   });
-
   pageResult.value = res.data as PageResult<WallPapers>;
   totalPage.value = Math.ceil(res.data.total / 24);
   console.log(totalPage.value);
@@ -133,11 +135,13 @@ async function pageSearch2(pageNum: number, pageSize: number) {
     body: JSON.stringify(filterSearch),
   });
 
-  pageResult.value = res.data as PageResult<WallPapers>;
-  console.log("分页数据:", pageResult.value);
-  totalPage.value = Math.ceil(res.data.total / 24);
-  console.log(totalPage.value);
-  imgMap.value.push(pageResult.value.record);
+  if (res.data) {
+    pageResult.value = res.data as PageResult<WallPapers>;
+    //console.log("分页数据:", pageResult.value);
+    totalPage.value = Math.ceil(res.data.total / 24);
+    console.log(totalPage.value);
+    imgMap.value.push(pageResult.value.record);
+  }
 }
 
 onMounted(() => {

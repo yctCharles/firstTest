@@ -27,5 +27,9 @@ export default defineNuxtConfig({
     public: {
       baseURL: 'http://localhost:8080'
     }
+  },
+  devServer: {
+    host: '0.0.0.0',
+    port: 3050
   }
 })
