@@ -53,6 +53,20 @@ import { ArrowDown } from "@element-plus/icons-vue";
 const selectResolution = ref<string>("Resolution");
 const selectDate = ref<string>("Date");
 const selectColor = ref<string>("Color");
+
+const handleSelect = () => {
+  if (searchStore().search.Resolution !== "All") {
+    selectResolution.value = searchStore().search.Resolution;
+  }
+  if (searchStore().search.Date !== "AllTime") {
+    selectDate.value = searchStore().search.Date;
+  }
+  if (searchStore().search.Color !== "All") {
+    selectColor.value = searchStore().search.Color;
+  }
+};
+handleSelect();
+
 const handleCommand = (command: string) => {
   selectResolution.value = command;
 };

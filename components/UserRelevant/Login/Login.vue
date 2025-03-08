@@ -1,10 +1,10 @@
 <template>
   <div
-    class="pagebox flex w-full h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 absolute left-0 top-0 items-center rounded-sm"
+    class="pagebox flex w-full h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 absolute left-0 top-0 items-center rounded-sm z-20"
     :class="theme"
   >
     <div
-      class="bg-slate-200 w-1/3 m-5 p-2 relative rounded-2xl dark:bg-slate-800"
+      class="bg-slate-200 w-1/3 m-5 p-2 relative rounded-2xl dark:bg-slate-600"
     >
       <div class="absolute top-1 right-2">
         <button @click="$emit('data-sent', { message: false })">
@@ -140,7 +140,7 @@ async function submitForm() {
         ElMessage({
           message: res.data.value.msg,
           type: "success",
-          duration:2500
+          duration: 2500,
         });
       }
     });

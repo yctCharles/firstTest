@@ -1,10 +1,10 @@
 <template>
   <div
-    class="pagebox flex w-full h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 absolute left-0 top-0 items-center rounded-sm"
+    class="pagebox flex w-full h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 absolute left-0 top-0 items-center rounded-sm z-20"
     :class="theme"
   >
     <div
-      class="bg-slate-200 w-1/3 m-5 p-2 relative rounded-2xl dark:bg-slate-800"
+      class="bg-slate-200 w-1/3 m-5 p-2 relative rounded-2xl dark:bg-slate-600"
     >
       <div class="absolute top-1 right-2">
         <button @click="$emit('data-sent', { message: false })">
@@ -83,8 +83,19 @@
                 class="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-100"
                 >Certain Password</label
               >
-              <span v-if="passwordmessage != certainpasswordmessage" class="text-red-500">Password not match</span>
-              <span v-if="passwordmessage == certainpasswordmessage && passwordmessage != ''" class="text-green-500">Password match</span>
+              <span
+                v-if="passwordmessage != certainpasswordmessage"
+                class="text-red-500"
+                >Password not match</span
+              >
+              <span
+                v-if="
+                  passwordmessage == certainpasswordmessage &&
+                  passwordmessage != ''
+                "
+                class="text-green-500"
+                >Password match</span
+              >
             </div>
             <div class="mt-2">
               <input
@@ -135,7 +146,11 @@ const emailmessage = ref("");
 const passwordmessage = ref("");
 const certainpasswordmessage = ref("");
 const judgeRegister = computed(() => {
-  if (emailmessage.value == "" || passwordmessage.value == "" || certainpasswordmessage.value == "") {
+  if (
+    emailmessage.value == "" ||
+    passwordmessage.value == "" ||
+    certainpasswordmessage.value == ""
+  ) {
     return true;
   }
   if (passwordmessage.value != certainpasswordmessage.value) {
@@ -143,27 +158,26 @@ const judgeRegister = computed(() => {
   }
   return false;
 });
-  const config:any = useRuntimeConfig();
-async function submitRegister(){
-    await useFetch("/user/register", {
-        baseURL:config.public.baseURL,
-        method: "post",
-        headers:{
-            "Content-Type": "application/json",
-        },
-        body: {
-            email: emailmessage.value,
-            password: passwordmessage.value,
-        },
-    }).then((res:any) => {
-      if(res.data.value.code == 0){
-          ElMessage.error(res.data.value.msg)
-      }else if(res.data.value.code == 1){
-          ElMessage.success(res.data.value.data)
-      } 
-    })
+const config: any = useRuntimeConfig();
+async function submitRegister() {
+  await useFetch("/user/register", {
+    baseURL: config.public.baseURL,
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: {
+      email: emailmessage.value,
+      password: passwordmessage.value,
+    },
+  }).then((res: any) => {
+    if (res.data.value.code == 0) {
+      ElMessage.error(res.data.value.msg);
+    } else if (res.data.value.code == 1) {
+      ElMessage.success(res.data.value.data);
+    }
+  });
 }
-
 </script>
 
 <style scoped>

@@ -16,12 +16,12 @@
         v-for="item in list"
         :key="item"
       >
-        <NuxtLink
-          to="/"
-          class="flex justify-center items-center h-full px-1 text-lg font-semibold text-gray-500 hover:text-gray-900"
+        <div
+          @click="handleClick(item)"
+          class="flex justify-center items-center h-full px-1 text-lg font-semibold text-gray-500 hover:text-gray-900 hover:cursor-pointer"
         >
           {{ item }}
-        </NuxtLink>
+        </div>
       </div>
     </div>
 
@@ -67,5 +67,21 @@ const gotoSearch = async () => {
     },
   });
   window.location.reload();
+};
+
+const handleClick = (item: string) => {
+  if (item !== "Upload") {
+    searchStore().setSearch("SearchWay", item);
+    async () =>
+      navigateTo({
+        path: "/search",
+        query: {
+          q: searchStore().tagName,
+        },
+      });
+    window.location.reload();
+  } else {
+    navigateTo("/upload");
+  }
 };
 </script>

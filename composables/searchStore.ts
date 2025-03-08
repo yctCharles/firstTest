@@ -34,7 +34,7 @@ export const searchStore = defineStore("searchFilter", () => {
     }
     const resetSearch = () => {
         search.value = {
-            Resolution: "1280x720",
+            Resolution: "All",
             Date: "AllTime",
             SearchWay: "Lastest",
             Color: "All",

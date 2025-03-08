@@ -1,7 +1,9 @@
 <template>
   <h1>上传</h1>
 
-  <h1>Public:</h1>
+  <h1 class="text-xl font-bold mt-5 text-lime-600 dark:text-green-400">
+    Public:
+  </h1>
   <div
     style="max-height: 20vh"
     class="w-full flex flex-row flex-wrap max-h-45 items-center justify-center overflow-y-scroll"

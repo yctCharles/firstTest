@@ -51,6 +51,7 @@ interface SearchFilterState {
   Resolution: string;
   Date: string;
   SearchWay: string;
+  Color: string;
   SortWay: number;
 }
 
@@ -76,7 +77,7 @@ const handleScroll = (e: Event) => {
     currentPage.value < totalPage.value
   ) {
     currentPage.value++;
-    pageSearch(currentPage.value, 24);
+    pageSearch2(currentPage.value, 24);
   }
 };
 
@@ -114,9 +115,34 @@ async function pageSearch(pageNum: number, pageSize: number) {
   imgMap.value.push(pageResult.value.record);
 }
 
+async function pageSearch2(pageNum: number, pageSize: number) {
+  // Fetching the data
+  let filterSearch = {
+    pageNum: pageNum,
+    pageSize: pageSize,
+    tagname: tname.tagname,
+    resolution: search.value?.Resolution,
+    date: search.value?.Date,
+    color: search.value?.Color,
+    searchWay: search.value?.SearchWay,
+    sortWay: search.value?.SortWay,
+  };
+  const res: any = await $fetch("/img/search4", {
+    method: "POST",
+    baseURL: useRuntimeConfig().public.baseURL,
+    body: JSON.stringify(filterSearch),
+  });
+
+  pageResult.value = res.data as PageResult<WallPapers>;
+  console.log("分页数据:", pageResult.value);
+  totalPage.value = Math.ceil(res.data.total / 24);
+  console.log(totalPage.value);
+  imgMap.value.push(pageResult.value.record);
+}
+
 onMounted(() => {
   getSearchFilter();
   console.log(search);
-  pageSearch(1, 24);
+  pageSearch2(1, 24);
 });
 </script>
