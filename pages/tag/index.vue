@@ -84,7 +84,7 @@ const theme = useState("theme");
 const pageResult = ref<PageResult<Tag>>();
 
 async function fetchPage(pageNum: number, pageSize: number) {
-  const res: any = await useFetch("/tag/page", {
+  const res = await $fetch("/tag/page", {
     method: "GET",
     params: {
       pageNum: pageNum,
@@ -93,15 +93,14 @@ async function fetchPage(pageNum: number, pageSize: number) {
     baseURL: useRuntimeConfig().public.baseURL,
   });
 
-  pageResult.value = res.data.value.data as PageResult<Tag>;
+  pageResult.value = res.data as PageResult<Tag>;
 }
 
 const changePage = (pageNum: number) => {
   fetchPage(pageNum, 10);
 };
-onMounted(() => {
-  fetchPage(1, 10);
-});
+
+fetchPage(1, 10);
 </script>
 
 <style scoped>

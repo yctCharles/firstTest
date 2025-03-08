@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="flex flex-row justify-between items-center h-20 bg-cyan-100 dark:bg-slate-700 fixed w-full z-50 shadow-lg"
+    class="flex flex-row justify-between items-center h-20 bg-cyan-100 dark:bg-slate-700 fixed w-full z-50 shadow-lg m-0 p-0 max-h-20 min-h-12"
   >
     <div class="flex justify-center items-center w-64">
       <NuxtLink to="/" class="w-full h-full">

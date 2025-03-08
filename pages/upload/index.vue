@@ -135,7 +135,7 @@ async function uploadImage() {
     formData.append("status", status.value.toString());
 
     try {
-      const response = await useFetch("/img/upload", {
+      const res = await $fetch("/img/upload", {
         method: "POST",
         baseURL: useRuntimeConfig().public.baseURL,
         headers: {
@@ -143,7 +143,7 @@ async function uploadImage() {
         },
         body: formData,
       });
-      const res: any = response.data.value;
+
       if (res.code == 1) {
         ElMessage({
           message: "上传成功",
