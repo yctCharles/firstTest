@@ -8,6 +8,7 @@
     >
       <div
         @click.stop="handleAllReplyBoxClose"
+        @scroll="handleScroll"
         class="handle absolute min-w-[800px] left-1/2 translate-x-[-50%] 48 bottom-0 w-[90%] h-2/3 z-10 dark:bg-gray-800 bg-white overflow-y-scroll rounded-tl-2xl rounded-tr-2xl p-10"
       >
         <div
@@ -39,9 +40,21 @@
             评论 <span class="text-sm"> {{ allCommentCount }} </span>
           </div>
           <div class="ml-2 text-black dark:text-white">
-            <span @click="sortType = 'new'"> 最新 </span>
-            <span class="text-sky-500"> | </span>
-            <span @click="sortType = 'hot'"> 最热</span>
+            <span
+              class="cursor-pointer"
+              :class="{ 'text-sky-500': sortType == 'new' }"
+              @click="sortType = 'new'"
+            >
+              最新
+            </span>
+            <span class="text-black dark:text-white font-bold"> | </span>
+            <span
+              class="cursor-pointer"
+              :class="{ 'text-sky-500': sortType == 'hot' }"
+              @click="sortType = 'hot'"
+            >
+              最热</span
+            >
           </div>
         </div>
 
@@ -154,7 +167,7 @@
 
               <div class="chilren-comment" v-show="item.showChildren">
                 <div
-                  class="w-full flex items-center justify-start pb-4"
+                  class="w-full flex items-center justify-start pb-4 relative"
                   v-for="child in item.children"
                 >
                   <div
@@ -213,9 +226,41 @@
                         >
                           回复
                         </span>
+                        <div
+                          v-if="child.userId === currentUserId"
+                          class="absolute bottom-4 right-5"
+                        >
+                          <img
+                            @click="
+                              handleDeleteComment(
+                                child.commentId,
+                                item.commentId
+                              )
+                            "
+                            src="../../public/icon/delete.svg"
+                            class="w-4 h-4 cursor-pointer"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
+                </div>
+
+                <div v-if="item.childrenSize > 3" class="">
+                  <el-pagination
+                    size="small"
+                    :page-size="3"
+                    @current-change="
+                      handleCurrentChange(
+                        item.childrenPageNum ? item.childrenPageNum : 1,
+                        3,
+                        item.commentId
+                      )
+                    "
+                    v-model:current-page="item.childrenPageNum"
+                    layout="prev, pager, next"
+                    :total="item.childrenSize"
+                  />
                 </div>
               </div>
               <div
@@ -535,7 +580,7 @@ const showSubmit = ref(false);
 const comment = ref("");
 const replyContent = ref("");
 const wallPaperId = route.params.slug;
-const userId = route.params.group;
+const uploadUserId = route.params.group;
 const isCollection = ref(false);
 const isLike = ref(false);
 const count = ref(0);
@@ -544,6 +589,7 @@ const allCommentCount = ref(0);
 watch(sortType, async (newVal) => {
   commentList.value = [];
   allCommentCount.value = 0;
+  currentPage.value = 1;
   await pageComment(1, 5);
   await setRootFirstChildren();
   pageGetCount();
@@ -670,6 +716,21 @@ const handleReply = (
     currentReplyUserId.value = childUserId;
   }
 };
+const currentPage = ref<number>(1);
+const totalPage = ref<number>(0);
+const handleScroll = (e: Event) => {
+  const scrollTop = (e.target as HTMLElement).scrollTop;
+  const clientHeight = (e.target as HTMLElement).clientHeight;
+  const scrollHeight = (e.target as HTMLElement).scrollHeight;
+
+  if (
+    scrollHeight - clientHeight - scrollTop <= 0 &&
+    currentPage.value < totalPage.value
+  ) {
+    currentPage.value++;
+    pageComment(currentPage.value, 5);
+  }
+};
 
 await useFetch("/tag/get/" + `${wallPaperId}`, {
   method: "GET",
@@ -696,8 +757,10 @@ const pageComment = async (pageNum: number, pageSize: number) => {
     },
   }).then((res: any) => {
     console.log("评论：", res);
-    commentList.value = res.record;
-    commentList.value = commentList.value.map((comment) => ({
+    const list = ref<Comment[]>([]);
+    list.value = res.record;
+    totalPage.value = Math.ceil(res.total / 5);
+    list.value = list.value.map((comment) => ({
       ...comment,
       children: [],
       showChildren: false,
@@ -705,6 +768,7 @@ const pageComment = async (pageNum: number, pageSize: number) => {
       childrenSize: 0,
       childrenPageNum: 1,
     }));
+    commentList.value.push(...list.value);
   });
 };
 
@@ -712,10 +776,19 @@ const setRootFirstChildren = () => {
   commentList.value.forEach((comment) => {
     pageGetChildrenComment(
       comment.childrenPageNum ? comment.childrenPageNum : 1,
-      3,
+      2,
       comment.commentId
     );
   });
+};
+
+const handleCurrentChange = (
+  pageNum: number,
+  pageSize: number,
+  commentId: bigint
+) => {
+  console.log("子评论分页：", pageNum, pageSize, commentId);
+  pageGetChildrenComment(pageNum, pageSize, commentId);
 };
 
 const pageGetChildrenComment = async (
@@ -739,12 +812,9 @@ const pageGetChildrenComment = async (
     //加入到父级评论中
     commentList.value.forEach((comment) => {
       if (comment.commentId === rootCommentId && comment.children) {
-        comment.children.push(...res.record);
+        comment.children = res.record;
         comment.childrenSize = res.total;
         console.log("添加子评论：", comment.children);
-        comment.childrenPageNum = comment.childrenPageNum
-          ? comment.childrenPageNum + 1
-          : 1;
       }
     });
   });
