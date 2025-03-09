@@ -16,9 +16,17 @@
         </div>
         <div class="flex flex-col text-left h-32 mx-2 justify-center">
           <h1 class="text-2xl font-bold">{{ userInfo?.userName }}</h1>
-          <h1 class="text-sm"><span class="font-bold">email :</span> {{ userInfo?.userEmail }}</h1>
-          <h1 class="text-sm"><span class="font-bold">Create Time: </span>{{ userInfo?.createTime }}</h1>
-          <h1 class="text-sm"><span class="font-bold">Update Time:</span> {{ userInfo?.updateTime }}</h1>
+          <h1 class="text-sm">
+            <span class="font-bold">email :</span> {{ userInfo?.userEmail }}
+          </h1>
+          <h1 class="text-sm">
+            <span class="font-bold">Create Time: </span
+            >{{ userInfo?.createTime }}
+          </h1>
+          <h1 class="text-sm">
+            <span class="font-bold">Update Time:</span>
+            {{ userInfo?.updateTime }}
+          </h1>
         </div>
         <div class="ml-auto relative">
           <svg
@@ -38,9 +46,13 @@
           </svg>
         </div>
       </div>
-      <div class="flex text-center bg-slate-100 dark:bg-slate-500 rounded-lg my-3 mx-3 h-20 w-3/5 p-2">
-            <h1 class="text-sm text-slate-500 dark:text-gray-50">{{ userInfo?.description }}</h1>
-          </div>
+      <div
+        class="flex text-center bg-slate-100 dark:bg-slate-500 rounded-lg my-3 mx-3 h-20 w-3/5 p-2"
+      >
+        <h1 class="text-sm text-slate-500 dark:text-gray-50">
+          {{ userInfo?.description }}
+        </h1>
+      </div>
       <div
         class="flex flex-row w-2/3 border-2 p-1 border-cyan-200 dark:border-slate-500 rounded-lg justify-center my-8 mx-auto"
       >
@@ -208,7 +220,7 @@ const userModel = ref<UserInfo>({
   description: "",
   createTime: null,
   updateTime: null,
-})
+});
 
 const editUser = () => {
   userModel.value.userName = userInfo.value?.userName || "";
@@ -218,7 +230,7 @@ const editUser = () => {
   userModel.value.description = userInfo.value?.description || "";
   console.log("图片文件：", selectedFile.value);
   visibleUser.value = true;
-}
+};
 
 const getuserInfo = () => {
   useFetch("/user/getInfo/" + `${userStore().userId}`, {
@@ -239,11 +251,11 @@ const getuserInfo = () => {
       });
     }
   });
-}
+};
 
 const submitUser = () => {
   const formData = new FormData();
-  formData.append("file", selectedFile.value as File || null);
+  formData.append("file", (selectedFile.value as File) || null);
   formData.append("userName", userModel.value.userName);
   formData.append("userSex", userModel.value.userSex);
   formData.append("description", userModel.value.description);
@@ -252,69 +264,68 @@ const submitUser = () => {
     method: "PUT",
     baseURL: useRuntimeConfig().public.baseURL,
     body: formData,
-     headers: {
+    headers: {
       token: userStore().token,
-     },
-    }).then((res) => {
+    },
+  }).then((res) => {
     const d: any = res.data.value;
     // d: code , data ,msg
-    if(d.code==1){
+    if (d.code == 1) {
       //成功调用回显用户信息
       getuserInfo();
       visibleUser.value = false;
       ElMessage({
-        message:"修改成功",
+        message: "修改成功",
         type: "success",
       });
-    }else{
+    } else {
       ElMessage({
-        message:"修改失败",
+        message: "修改失败",
         type: "error",
       });
     }
-    })
-  }
-
-onBeforeMount( () => {
-try {
- // if(import.meta.client) {  //process.client 服务端无法获取到localStorage里的信息，这里必须客户端执行
-    useFetch("/user/getInfo/" + `${userStore().userId}`, {
-    method: "GET",
-    baseURL: useRuntimeConfig().public.baseURL,
-    headers: {
-      token: userStore().token,
-    },
-    onResponseError({ response }) {
-      if (response.status === 401) {
-        navigateTo("/");
-        userStore().setToken("");
-        userStore().setUserId("");
-        localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        const isLogin = useState("testLogin")
-        isLogin.value = false;
-        ElMessage({
-          message:"请登录",
-          type: "error",
-        });
-      }
-    }
-  }).then((res) => {
-    const d: any = res.data.value;
-    // d: code , data ,msg
-    if(d.code==1){
-       userInfo.value = d.data;
-    }
   });
-//}
-} catch (error) {
-  ElMessage({
-          message:"请求失败",
-          type: "error",
-        });
-  console.error("请求发生错误", error);
-  navigateTo("/");
-}
-})
-</script>
+};
 
+onBeforeMount(() => {
+  try {
+    // if(import.meta.client) {  //process.client 服务端无法获取到localStorage里的信息，这里必须客户端执行
+    useFetch("/user/getInfo/" + `${userStore().userId}`, {
+      method: "GET",
+      baseURL: useRuntimeConfig().public.baseURL,
+      headers: {
+        token: userStore().token,
+      },
+      onResponseError({ response }) {
+        if (response.status === 401) {
+          navigateTo("/");
+          userStore().setToken("");
+          userStore().setUserId("");
+          localStorage.removeItem("token");
+          localStorage.removeItem("userId");
+          const isLogin = useState("testLogin");
+          isLogin.value = false;
+          ElMessage({
+            message: "请登录",
+            type: "error",
+          });
+        }
+      },
+    }).then((res) => {
+      const d: any = res.data.value;
+      // d: code , data ,msg
+      if (d.code == 1) {
+        userInfo.value = d.data;
+      }
+    });
+    //}
+  } catch (error) {
+    ElMessage({
+      message: "请求失败",
+      type: "error",
+    });
+    console.error("请求发生错误", error);
+    navigateTo("/");
+  }
+});
+</script>

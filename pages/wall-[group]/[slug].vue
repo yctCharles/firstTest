@@ -65,7 +65,7 @@
               placeholder="欣赏艺术，评论艺术"
               minlength="1"
               maxlength="900"
-              show-word-limit="true"
+              :show-word-limit="true"
               v-on:focus="showSubmit = true"
               v-on:blur="showSubmit = false"
               style="height: 50px"
@@ -77,7 +77,7 @@
             v-show="comment.length > 0"
           >
             <el-button
-              @click="submitComment('commom')"
+              @click="submitComment('commom', 0n, 0)"
               :disabled="currentUser.userName == null"
               >{{
                 currentUser.userName == null ? "登录发布评论" : "评论"
@@ -89,8 +89,8 @@
         <div class="flex flex-col w-full pl-32 pr-4">
           <div
             class="w-full flex justify-start py-4"
-            v-for="item in commentList"
-            :key="item.commentId"
+            v-for="(item, index) in commentList"
+            :key="index"
           >
             <div class="w-18 h-full flex flex-col justify-start items-start">
               <div
@@ -116,7 +116,7 @@
 
                   <div
                     class="cursor-pointer"
-                    @click="handleCommentLike(item.commentId)"
+                    @click="handleCommentLike(item.commentId, item.commentId)"
                   >
                     <liked
                       v-if="item.isLike"
@@ -126,7 +126,12 @@
                     />
                     <like v-else class="mx-2" width="20" height="20" />
                   </div>
-                  <span @click.stop="handleReply(item.commentId)"> 回复 </span>
+                  <span class="text-gray-400 text-sm flex items-center mr-1">{{
+                    item.likeCount
+                  }}</span>
+                  <span @click.stop="handleReply(item.commentId, 0n, 0)">
+                    回复
+                  </span>
                 </div>
               </div>
 
@@ -158,7 +163,11 @@
                       <div class="text-slate-800 my-1">{{ child.content }}</div>
                       <div class="text-gray-400 my-1 flex">
                         {{ child.createTime }}
-                        <div @click="handleCommentLike(child.commentId)">
+                        <div
+                          @click="
+                            handleCommentLike(child.commentId, item.commentId)
+                          "
+                        >
                           <liked
                             v-if="child.isLike"
                             class="mx-2"
@@ -167,6 +176,10 @@
                           />
                           <like v-else class="mx-2" width="20" height="20" />
                         </div>
+                        <span
+                          class="text-gray-400 text-sm flex items-center mr-1"
+                          >{{ child.likeCount }}</span
+                        >
                         <span
                           @click.stop="
                             handleReply(
@@ -202,7 +215,7 @@
                     placeholder="展示你的高情商回复吧"
                     minlength="1"
                     maxlength="900"
-                    show-word-limit="true"
+                    :show-word-limit="true"
                     v-on:focus="showSubmit = true"
                     v-on:blur="showSubmit = false"
                     style="height: 50px"
@@ -415,7 +428,7 @@
 <script setup lang="ts">
 import SearchHeader from "~/components/Layout/SearchHeader.vue";
 import { v4 as uuidv4 } from "uuid";
-import { Comment } from "../../node_modules/@element-plus/icons-vue/dist";
+
 interface WallObj {
   url: string;
   width: number;
@@ -471,9 +484,13 @@ const wallobj = ref<WallObj>({
   colourWhite: 0,
   colourGray: 0,
 });
-const currentUser = ref<SimpleUser>({});
+const currentUser = ref<SimpleUser>({
+  userUrl: "",
+  userName: "",
+  userEmail: "",
+});
 const commentList = ref<Comment[]>([]);
-const currentReplyCommentId = ref<bigint>(0);
+const currentReplyCommentId = ref<bigint>(0n);
 const currentReplyUserId = ref<number>(0);
 const showComment = ref(false);
 const showSubmit = ref(false);
@@ -496,7 +513,11 @@ const showReply = (commentId: bigint) => {
     (comment) => comment.commentId === commentId
   );
   if (commentObj && commentObj.showChildren === true) {
-    pageGetChildrenComment(commentObj.childrenPageNum, 3, commentId);
+    pageGetChildrenComment(
+      commentObj.childrenPageNum ? commentObj.childrenPageNum : 1,
+      3,
+      commentId
+    );
   }
 };
 
@@ -516,7 +537,7 @@ const handleReply = (
     }
   });
   //如果是点击的子评论回复
-  if (toCommentId) {
+  if (toCommentId && toCommentId != 0n) {
     currentReplyCommentId.value = toCommentId;
   } else {
     currentReplyCommentId.value = commentId;
@@ -524,7 +545,7 @@ const handleReply = (
     currentReplyUserId.value = 0;
   }
 
-  if (childUserId) {
+  if (childUserId && childUserId != 0) {
     currentReplyUserId.value = childUserId;
   }
 };
@@ -539,7 +560,7 @@ await useFetch("/tag/get/" + `${wallPaperId}`, {
   tagList.value = list;
 });
 
-const pageComment = async (pageNum, pageSize) => {
+const pageComment = async (pageNum: number, pageSize: number) => {
   const res = await $fetch("/comment/get", {
     method: "GET",
     baseURL: useRuntimeConfig().public.baseURL,
@@ -551,7 +572,7 @@ const pageComment = async (pageNum, pageSize) => {
       pageSize: pageSize,
       wallpaperId: wallPaperId,
     },
-  }).then((res) => {
+  }).then((res: any) => {
     console.log("评论：", res);
     commentList.value = res.record;
     commentList.value = commentList.value.map((comment) => ({
@@ -567,11 +588,19 @@ const pageComment = async (pageNum, pageSize) => {
 
 const setRootFirstChildren = () => {
   commentList.value.forEach((comment) => {
-    pageGetChildrenComment(comment.childrenPageNum, 3, comment.commentId);
+    pageGetChildrenComment(
+      comment.childrenPageNum ? comment.childrenPageNum : 1,
+      3,
+      comment.commentId
+    );
   });
 };
 
-const pageGetChildrenComment = async (pageNum, pageSize, rootCommentId) => {
+const pageGetChildrenComment = async (
+  pageNum: number,
+  pageSize: number,
+  rootCommentId: bigint
+) => {
   const res = await $fetch("/comment/get-children", {
     method: "GET",
     baseURL: useRuntimeConfig().public.baseURL,
@@ -581,22 +610,24 @@ const pageGetChildrenComment = async (pageNum, pageSize, rootCommentId) => {
     params: {
       pageNum: pageNum,
       pageSize: pageSize,
-      rootCommentId: rootCommentId,
+      rootCommentId: rootCommentId.toString(),
     },
-  }).then((res) => {
+  }).then((res: any) => {
     //加入到父级评论中
     commentList.value.forEach((comment) => {
       if (comment.commentId === rootCommentId && comment.children) {
         comment.children.push(...res.record);
         comment.childrenSize = res.total;
         console.log("添加子评论：", comment.children);
-        comment.childrenPageNum += 1;
+        comment.childrenPageNum = comment.childrenPageNum
+          ? comment.childrenPageNum + 1
+          : 1;
       }
     });
   });
 };
 
-const handleCommentLike = async (commentId: bigint) => {
+const handleCommentLike = async (commentId: bigint, rootCommentId: bigint) => {
   if (!userStore().token) {
     ElMessage.error("请先登录");
     return;
@@ -608,11 +639,40 @@ const handleCommentLike = async (commentId: bigint) => {
       token: userStore().token,
     },
     params: {
-      commentId: commentId,
+      commentId: commentId.toString(),
       userId: userStore().userId,
     },
-  }).then((res) => {
+  }).then((res: any) => {
     if (res.code === 1) {
+      //手动更新点赞状态
+      if (rootCommentId === commentId) {
+        //主评论点赞
+        commentList.value.forEach((comment) => {
+          if (comment.commentId === commentId) {
+            comment.isLike = !comment.isLike;
+            if (comment.isLike) {
+              comment.likeCount = comment.likeCount + 1;
+            } else {
+              comment.likeCount = comment.likeCount - 1;
+            }
+          }
+        });
+      } else {
+        commentList.value.forEach((comment) => {
+          if (comment.commentId === rootCommentId && comment.children) {
+            comment.children.forEach((child) => {
+              if (child.commentId === commentId) {
+                child.isLike = !child.isLike;
+                if (child.isLike) {
+                  child.likeCount = child.likeCount + 1;
+                } else {
+                  child.likeCount = child.likeCount - 1;
+                }
+              }
+            });
+          }
+        });
+      }
       ElMessage.success(res.data);
     } else {
       ElMessage.error("点赞失败");
@@ -630,15 +690,20 @@ const submitComment = async (
     content: comment.value,
     userId: userStore().userId,
     wallpaperId: wallPaperId,
-    toCommentId: null,
-    rootCommentId: null,
-    toUserId: null,
+    toCommentId: 0n.toString(),
+    rootCommentId: 0n.toString(),
+    toUserId: 0,
   };
 
   //回复子评论
-  if (type === "reply" && rootCommentId && currentReplyUserId.value !== 0) {
-    body.rootCommentId = rootCommentId;
-    body.toCommentId = currentReplyCommentId.value;
+  if (
+    type === "reply" &&
+    rootCommentId &&
+    rootCommentId != 0n &&
+    currentReplyUserId.value !== 0
+  ) {
+    body.rootCommentId = rootCommentId.toString();
+    body.toCommentId = currentReplyCommentId.value.toString();
     body.content = replyContent.value;
     body.toUserId = currentReplyUserId.value;
   }
@@ -647,8 +712,8 @@ const submitComment = async (
   if (type === "reply" && currentReplyUserId.value === 0) {
     body.toUserId = userId;
     body.content = replyContent.value;
-    body.toCommentId = rootCommentId;
-    body.rootCommentId = rootCommentId;
+    body.toCommentId = rootCommentId.toString();
+    body.rootCommentId = rootCommentId.toString();
   }
 
   console.log("评论开始");
@@ -656,7 +721,10 @@ const submitComment = async (
     method: "POST",
     baseURL: useRuntimeConfig().public.baseURL,
     body: body,
-  }).then((res) => {
+    headers: {
+      token: userStore().token,
+    },
+  }).then((res: any) => {
     console.log("评论完：", res);
     if (res.code === 1) {
       ElMessage.success("评论成功");
@@ -694,7 +762,7 @@ if (userStore().userId) {
       userId: userStore().userId,
       wallpaperId: wallPaperId,
     },
-  }).then((res) => {
+  }).then((res: any) => {
     //console.log("收藏：", res.data);
     isCollection.value = res.data;
   });
@@ -704,7 +772,7 @@ if (userStore().userId) {
   await $fetch("/user/get/" + `${userStore().userId}`, {
     method: "GET",
     baseURL: useRuntimeConfig().public.baseURL,
-  }).then((res) => {
+  }).then((res: any) => {
     currentUser.value = res.data;
   });
 }
@@ -737,7 +805,7 @@ if (userStore().userId) {
       userId: userStore().userId,
       wallpaperId: wallPaperId,
     },
-  }).then((res) => {
+  }).then((res: any) => {
     //console.log("是否点赞：", res.data);
     isLike.value = res.data;
   });
@@ -797,7 +865,7 @@ function collectionImage() {
       userId: userStore().userId,
       wallpaperId: wallPaperId,
     },
-  }).then((res) => {
+  }).then((res: any) => {
     console.log("收藏结果：", res.data);
     if (res.code == 1) {
       ElMessage({
@@ -834,7 +902,7 @@ function likeImage() {
         userId: userStore().userId,
         wallpaperId: wallPaperId,
       },
-    }).then((res) => {
+    }).then((res: any) => {
       ElMessage({
         message: res.data,
         type: "success",
