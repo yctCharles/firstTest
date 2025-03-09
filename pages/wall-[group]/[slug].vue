@@ -7,7 +7,7 @@
       @click="showComment = false"
     >
       <div
-        @click.stop
+        @click.stop="handleAllReplyBoxClose"
         class="handle absolute min-w-[800px] left-1/2 translate-x-[-50%] 48 bottom-0 w-[90%] h-2/3 z-10 dark:bg-gray-800 bg-white overflow-y-scroll rounded-tl-2xl rounded-tr-2xl p-10"
       >
         <div
@@ -33,12 +33,15 @@
           </svg>
         </div>
         <div class="flex justify-start items-center">
-          <div class="text-2xl font-bold text-center">
-            评论 <span class="text-sm"> 12 </span>
+          <div
+            class="text-2xl font-bold text-center text-black dark:text-white"
+          >
+            评论 <span class="text-sm"> {{ allCommentCount }} </span>
           </div>
-          <div class="ml-2">
-            <span> 最新 |</span>
-            <span> 最热</span>
+          <div class="ml-2 text-black dark:text-white">
+            <span @click="sortType = 'new'"> 最新 </span>
+            <span class="text-sky-500"> | </span>
+            <span @click="sortType = 'hot'"> 最热</span>
           </div>
         </div>
 
@@ -88,6 +91,7 @@
 
         <div class="flex flex-col w-full pl-32 pr-4">
           <div
+            @click.stop
             class="w-full flex justify-start py-4"
             v-for="(item, index) in commentList"
             :key="index"
@@ -106,7 +110,7 @@
             <div
               class="flex w-full flex-col border-b-[1px] pb-4 border-slate-400"
             >
-              <div class="mian-comment">
+              <div class="mian-comment relative">
                 <div class="h-4 text-red-400 my-1">
                   {{ item.simpleUser.userName }}
                 </div>
@@ -129,9 +133,22 @@
                   <span class="text-gray-400 text-sm flex items-center mr-1">{{
                     item.likeCount
                   }}</span>
-                  <span @click.stop="handleReply(item.commentId, 0n, 0)">
+                  <span
+                    class="dark:text-lime-200 text-lime-400 cursor-pointer"
+                    @click.stop="handleReply(item.commentId, 0n, 0)"
+                  >
                     回复
                   </span>
+                </div>
+                <div
+                  v-if="item.userId === currentUserId"
+                  class="absolute bottom-4 right-5"
+                >
+                  <img
+                    @click="handleDeleteComment(item.commentId, 0n)"
+                    src="../../public/icon/delete.svg"
+                    class="w-5 h-5 cursor-pointer"
+                  />
                 </div>
               </div>
 
@@ -141,13 +158,17 @@
                   v-for="child in item.children"
                 >
                   <div
-                    class="w-8 h-8 rounded-[100%] bg-slate-600 mr-4 overflow-hidden"
+                    class="w-8 h-full flex flex-col justify-start items-start mr-2"
                   >
-                    <img
-                      :src="child.simpleUser.userUrl"
-                      alt="头像"
-                      style="width: 100%; height: 100%; object-fit: cover"
-                    />
+                    <div
+                      class="w-8 h-8 rounded-[100%] bg-slate-600 mr-4 overflow-hidden"
+                    >
+                      <img
+                        style="width: 100%; height: 100%; object-fit: cover"
+                        :src="child.simpleUser.userUrl"
+                        alt="头像"
+                      />
+                    </div>
                   </div>
                   <div class="flex w-full flex-col">
                     <div class="mian-comment">
@@ -181,6 +202,7 @@
                           >{{ child.likeCount }}</span
                         >
                         <span
+                          class="dark:text-red-200 text-pink-400 cursor-pointer"
                           @click.stop="
                             handleReply(
                               item.commentId,
@@ -212,7 +234,18 @@
                   <el-input
                     type="text"
                     v-model="replyContent"
-                    placeholder="展示你的高情商回复吧"
+                    :placeholder="
+                      currentReplyUserId === 0
+                        ? `@${
+                            item.simpleUser?.userName || '用户'
+                          } 展示你的高情商回复吧`
+                        : `@${
+                            item.children?.find(
+                              (child) =>
+                                child.commentId === currentReplyCommentId
+                            )?.simpleUser?.userName || '用户'
+                          } 展示你的高情商回复吧`
+                    "
                     minlength="1"
                     maxlength="900"
                     :show-word-limit="true"
@@ -468,6 +501,9 @@ interface Comment {
   showChildren?: boolean;
   showReplyBox?: boolean;
 }
+
+const currentUserId = Number(userStore().userId);
+// console.log("查询当前用户id：", currentUserId);
 const theme = useState("theme");
 const route = useRoute();
 const tagList = ref<string[]>([]);
@@ -489,6 +525,8 @@ const currentUser = ref<SimpleUser>({
   userName: "",
   userEmail: "",
 });
+
+const sortType = ref<string>("new");
 const commentList = ref<Comment[]>([]);
 const currentReplyCommentId = ref<bigint>(0n);
 const currentReplyUserId = ref<number>(0);
@@ -501,6 +539,15 @@ const userId = route.params.group;
 const isCollection = ref(false);
 const isLike = ref(false);
 const count = ref(0);
+const allCommentCount = ref(0);
+
+watch(sortType, async (newVal) => {
+  commentList.value = [];
+  allCommentCount.value = 0;
+  await pageComment(1, 5);
+  await setRootFirstChildren();
+  pageGetCount();
+});
 
 const showReply = (commentId: bigint) => {
   commentList.value.forEach((comment) => {
@@ -521,6 +568,80 @@ const showReply = (commentId: bigint) => {
   }
 };
 
+const handleDeleteComment = (commentId: bigint, rootCommentId: bigint) => {
+  ElMessageBox.confirm("确定删除该评论吗？删除后回复评论也会被删除", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      deleteComment(commentId, rootCommentId);
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "已取消删除",
+      });
+    });
+};
+
+const deleteComment = async (commentId: bigint, rootCommentId: bigint) => {
+  await $fetch("/comment/delete", {
+    method: "DELETE",
+    baseURL: useRuntimeConfig().public.baseURL,
+    headers: {
+      token: userStore().token,
+    },
+    params: {
+      commentId: commentId.toString(),
+      userId: currentUserId,
+    },
+  }).then((res: any) => {
+    console.log("删除评论：", res);
+    if (res.code === 1) {
+      //刷新数量
+      pageGetCount();
+      //成功后手动移除
+      if (rootCommentId === 0n) {
+        commentList.value = commentList.value.filter(
+          (comment) => comment.commentId !== commentId
+        );
+      } else {
+        const commentObj = commentList.value.find(
+          (comment) => comment.commentId === rootCommentId
+        );
+        if (commentObj) {
+          commentObj.children = commentObj.children?.filter(
+            (comment) => comment.commentId !== commentId
+          );
+        }
+      }
+      ElMessage({
+        type: "success",
+        message: "删除成功",
+      });
+    }
+  });
+};
+
+const pageGetCount = async () => {
+  const res: any = await $fetch("/comment/get-all-count", {
+    method: "GET",
+    baseURL: useRuntimeConfig().public.baseURL,
+    params: {
+      wallpaperId: wallPaperId,
+    },
+  });
+  if (res.data) {
+    allCommentCount.value = res.data;
+  }
+};
+
+const handleAllReplyBoxClose = () => {
+  commentList.value.forEach((comment) => {
+    comment.showReplyBox = false;
+  });
+};
 const handleReply = (
   commentId: bigint,
   toCommentId: bigint,
@@ -571,6 +692,7 @@ const pageComment = async (pageNum: number, pageSize: number) => {
       pageNum: pageNum,
       pageSize: pageSize,
       wallpaperId: wallPaperId,
+      sortType: sortType.value,
     },
   }).then((res: any) => {
     console.log("评论：", res);
@@ -611,6 +733,7 @@ const pageGetChildrenComment = async (
       pageNum: pageNum,
       pageSize: pageSize,
       rootCommentId: rootCommentId.toString(),
+      sortType: sortType.value,
     },
   }).then((res: any) => {
     //加入到父级评论中
@@ -728,7 +851,7 @@ const submitComment = async (
     console.log("评论完：", res);
     if (res.code === 1) {
       ElMessage.success("评论成功");
-
+      allCommentCount.value = allCommentCount.value + 1;
       if (type === "reply") {
         //刷新子评论
         commentList.value.forEach((comment) => {
@@ -916,6 +1039,7 @@ function likeImage() {
 onMounted(async () => {
   await pageComment(1, 5);
   await setRootFirstChildren();
+  await pageGetCount();
 });
 </script>
 
